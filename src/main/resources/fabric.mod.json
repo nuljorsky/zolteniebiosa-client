@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "zolteniebiosa",
+  "version": "1.0.0",
+  "name": "ZolteNiebiosa CLIENT",
+  "description": "ZolteNiebiosa CLIENT - menu na klawisz N, tracery, block ESP, auto leave, anty kostka.",
+  "authors": ["ZolteNiebiosa"],
+  "contact": { "homepage": "https://www.youtube.com/@zolteNiebiosa" },
+  "license": "All-Rights-Reserved",
+  "environment": "client",
+  "entrypoints": { "client": ["pl.zolteniebiosa.ZolteClient"] },
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
