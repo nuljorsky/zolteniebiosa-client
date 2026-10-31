@@ -1,69 +1,182 @@
 package pl.zolteniebiosa;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
+import java.util.List;
+import java.util.Random;
+
 public class Modules {
-    private static int tickCounter = 0;
+    private static int ticks = 0;
+    private static boolean fbApplied = false;
+    private static final Random R = new Random();
+    public static Item[] saved = null;
+    public static volatile boolean dirty = false;
 
     public static void tick(MinecraftClient mc) {
         if (mc.player == null || mc.world == null) return;
-        tickCounter++;
+        ticks++;
 
-        // NOC (tylko wizualnie po stronie klienta)
-        if (Config.night) {
+        if (Mods.NIGHT.enabled) {
             mc.world.getLevelProperties().setTimeOfDay(18000L);
         }
 
-        // AUTO LEAVE - tylko gracze
-        if (Config.autoLeave && mc.getNetworkHandler() != null) {
+        if (Mods.FULLBRIGHT.enabled) {
+            if (ticks % 100 == 1) {
+                mc.player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 400, 0, false, false, false));
+                fbApplied = true;
+            }
+        } else if (fbApplied) {
+            mc.player.removeStatusEffect(StatusEffects.NIGHT_VISION);
+            fbApplied = false;
+        }
+
+        if (Mods.WEATHER.enabled) {
+            int d = Mods.WEATHER.n("density");
+            boolean snow = Mods.WEATHER.mode("type") == 1;
+            for (int i = 0; i < d * 3; i++) {
+                double x = mc.player.getX() + (R.nextDouble() - 0.5) * 24;
+                double y = mc.player.getY() + 2 + R.nextDouble() * 8;
+                double z = mc.player.getZ() + (R.nextDouble() - 0.5) * 24;
+                if (snow) {
+                    mc.world.addParticle(ParticleTypes.SNOWFLAKE, x, y, z,
+                            (R.nextDouble() - 0.5) * 0.02, -0.08, (R.nextDouble() - 0.5) * 0.02);
+                } else {
+                    mc.world.addParticle(ParticleTypes.FALLING_WATER, x, y, z, 0, -0.5, 0);
+                }
+            }
+        }
+
+        if (Mods.AUTOLEAVE.enabled && mc.getNetworkHandler() != null) {
+            int dist = Mods.AUTOLEAVE.n("dist");
             for (PlayerEntity p : mc.world.getPlayers()) {
                 if (p == mc.player) continue;
-                if (p.distanceTo(mc.player) <= Config.leaveDist) {
+                if (p.distanceTo(mc.player) <= dist) {
                     mc.getNetworkHandler().getConnection().disconnect(
                             Text.literal("ZolteNiebiosa CLIENT: AutoLeave - gracz " + p.getName().getString() + " w poblizu"));
-                    Config.autoLeave = false;
+                    Mods.AUTOLEAVE.enabled = false;
                     return;
                 }
             }
         }
 
-        // BLOCK ESP - skan co sekunde
-        if (Config.blockEsp && tickCounter % 20 == 0) {
-            Esp.scan(mc);
+        if (dirty || ticks % 40 == 0) {
+            dirty = false;
+            Esp.espHits = Mods.BLOCKESP.enabled ? Esp.scan(Mods.BLOCKESP, mc) : List.of();
+            Esp.xrayHits = Mods.XRAY.enabled ? Esp.scan(Mods.XRAY, mc) : List.of();
+        }
+
+        if (ticks % 40 == 5 && Mods.SKIN.enabled) {
+            Skin.apply(Mods.SKIN.txt("name"));
         }
     }
 
-    // ===== ANTY KOSTKA =====
+    // ===== trafienie =====
+    public static void onAttack(Entity e) {
+        if (!Mods.HITSOUND.enabled) return;
+        int tg = Mods.HITSOUND.mode("target");
+        boolean isP = e instanceof PlayerEntity;
+        if (tg == 0 && !isP) return;
+        if (tg == 1 && isP) return;
+        float vol = Mods.HITSOUND.n("volume") / 100f;
+        int s = Mods.HITSOUND.mode("sound");
+        if (s == 0) play(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, vol, 1.7f);
+        else if (s == 1) play(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, vol, 1.3f);
+        else play(SoundEvents.ENTITY_CAT_PURREOW, vol, 1.6f);
+    }
+
+    private static void play(Object snd, float vol, float pitch) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.player == null) return;
+        SoundEvent ev = null;
+        if (snd instanceof SoundEvent se) ev = se;
+        else if (snd instanceof RegistryEntry<?> re && re.value() instanceof SoundEvent se2) ev = se2;
+        if (ev != null) mc.player.playSound(ev, vol, pitch);
+    }
+
+    // ===== baritone =====
+    private static boolean hasBaritone() {
+        FabricLoader fl = FabricLoader.getInstance();
+        return fl.isModLoaded("baritone") || fl.isModLoaded("baritone-fabric") || fl.isModLoaded("baritone_unoptimized");
+    }
+
+    public static void baritone(boolean on) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.player == null) return;
+        if (!hasBaritone()) {
+            mc.player.sendMessage(Text.literal("§e[ZolteNiebiosa] §cBaritone nie jest zainstalowany - wrzuć moda Baritone do folderu mods."), false);
+            Mods.BARITONE.enabled = false;
+            return;
+        }
+        String block = Mods.BARITONE.txt("block").trim();
+        if (on) {
+            if (block.isEmpty()) {
+                mc.player.sendMessage(Text.literal("§e[ZolteNiebiosa] §cWpisz nazwę bloku w ustawieniach Baritone."), false);
+                Mods.BARITONE.enabled = false;
+                return;
+            }
+            mc.player.networkHandler.sendChatMessage("#mine " + block);
+        } else {
+            mc.player.networkHandler.sendChatMessage("#stop");
+        }
+    }
+
+    // "#baritone diamond_ore on" / "#baritone off"
+    public static boolean chatAlias(String msg) {
+        String m = msg.trim();
+        if (!m.toLowerCase().startsWith("#baritone")) return true;
+        String[] p = m.split("\\s+");
+        if (p.length < 2) return false;
+        String last = p[p.length - 1].toLowerCase();
+        if (last.equals("off")) {
+            Mods.BARITONE.enabled = false;
+            baritone(false);
+        } else if (last.equals("on") && p.length >= 3) {
+            Mods.BARITONE.get("block").text = p[1];
+            Mods.BARITONE.enabled = true;
+            baritone(true);
+        }
+        return false;
+    }
+
+    // ===== anty kostka =====
     public static void saveInventory(MinecraftClient mc) {
         if (mc.player == null) return;
         Item[] arr = new Item[46];
         for (int id = 9; id <= 44; id++) {
             arr[id] = mc.player.playerScreenHandler.getSlot(id).getStack().getItem();
         }
-        Config.savedInv = arr;
-        mc.player.sendMessage(Text.literal("§e[ZolteNiebiosa] §aZapisano uklad EQ!"), false);
+        saved = arr;
+        mc.player.sendMessage(Text.literal("§e[ZolteNiebiosa] §aZapisano układ EQ!"), false);
     }
 
     public static void restoreInventory(MinecraftClient mc) {
         if (mc.player == null || mc.interactionManager == null) return;
-        if (Config.savedInv == null) {
-            mc.player.sendMessage(Text.literal("§e[ZolteNiebiosa] §cNajpierw zapisz uklad EQ w menu (N)!"), false);
+        if (saved == null) {
+            mc.player.sendMessage(Text.literal("§e[ZolteNiebiosa] §cNajpierw zapisz układ EQ w menu (N)!"), false);
             return;
         }
         var handler = mc.player.playerScreenHandler;
-        Item[] saved = Config.savedInv;
         for (int id = 9; id <= 44; id++) {
             Item target = saved[id];
             if (handler.getSlot(id).getStack().getItem() == target) continue;
-            if (target == net.minecraft.item.Items.AIR) continue;
+            if (target == Items.AIR) continue;
             for (int j = 9; j <= 44; j++) {
                 if (j == id) continue;
                 if (handler.getSlot(j).getStack().getItem() != target) continue;
-                if (saved[j] == target) continue; // ten juz stoi dobrze
+                if (saved[j] == target) continue;
                 mc.interactionManager.clickSlot(0, j, 0, SlotActionType.PICKUP, mc.player);
                 mc.interactionManager.clickSlot(0, id, 0, SlotActionType.PICKUP, mc.player);
                 if (!handler.getCursorStack().isEmpty()) {
@@ -72,6 +185,6 @@ public class Modules {
                 break;
             }
         }
-        mc.player.sendMessage(Text.literal("§e[ZolteNiebiosa] §aPrzywrocono EQ!"), false);
+        mc.player.sendMessage(Text.literal("§e[ZolteNiebiosa] §aPrzywrócono EQ!"), false);
     }
 }

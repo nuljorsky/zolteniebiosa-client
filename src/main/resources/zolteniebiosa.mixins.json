@@ -1,0 +1,9 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "pl.zolteniebiosa.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": ["ViewModelMixin", "NameProtectMixin", "SkinMixin"],
+  "injectors": { "defaultRequire": 0 }
+}
