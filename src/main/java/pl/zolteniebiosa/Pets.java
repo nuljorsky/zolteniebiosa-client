@@ -12,7 +12,6 @@ import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.passive.PandaEntity;
 import net.minecraft.entity.passive.ParrotEntity;
 import net.minecraft.entity.passive.WolfEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.MathHelper;
@@ -24,7 +23,6 @@ public class Pets {
     private static int kind = -1;
     private static World petWorld;
     private static boolean broken = false;
-    private static DyeColor lastDye = null;
 
     private static final DyeColor[] DYE = {DyeColor.WHITE, DyeColor.WHITE, DyeColor.RED, DyeColor.ORANGE, DyeColor.YELLOW,
             DyeColor.LIME, DyeColor.CYAN, DyeColor.BLUE, DyeColor.PURPLE, DyeColor.PINK};
@@ -38,17 +36,6 @@ public class Pets {
         };
     }
 
-    // kolor obrozy ustawiany przez NBT (setter jest prywatny w 1.21.4)
-    private static void collar(Entity e, DyeColor dc) {
-        if (dc == lastDye) return;
-        lastDye = dc;
-        try {
-            NbtCompound n = new NbtCompound();
-            n.putByte("CollarColor", (byte) dc.getId());
-            e.readNbt(n);
-        } catch (Throwable ignored) { }
-    }
-
     public static void render(WorldRenderContext ctx) {
         if (broken || !Mods.PET.enabled) return;
         MinecraftClient mc = MinecraftClient.getInstance();
@@ -57,7 +44,6 @@ public class Pets {
             int k = Mods.PET.mode("pet");
             if (pet == null || kind != k || petWorld != mc.world) {
                 pet = make(k, mc.world);
-                lastDye = null;
                 kind = k;
                 petWorld = mc.world;
             }
@@ -65,12 +51,12 @@ public class Pets {
             DyeColor dc = ci <= 0 ? DyeColor.values()[(int) ((System.currentTimeMillis() / 700) % 16)] : DYE[Math.min(ci, DYE.length - 1)];
             if (pet instanceof CatEntity c) {
                 if (!c.isTamed()) c.setTamed(true, false);
+                c.setCollarColor(dc);
                 c.setInSittingPose(true);
-                collar(c, dc);
             } else if (pet instanceof WolfEntity w) {
                 if (!w.isTamed()) w.setTamed(true, false);
+                w.setCollarColor(dc);
                 w.setInSittingPose(true);
-                collar(w, dc);
             } else if (pet instanceof ParrotEntity p) {
                 ParrotEntity.Variant[] vs = ParrotEntity.Variant.values();
                 p.setVariant(vs[Math.max(0, ci) % vs.length]);
