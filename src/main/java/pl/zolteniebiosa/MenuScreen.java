@@ -27,6 +27,7 @@ public class MenuScreen extends Screen {
     static final String[] TABS = {"WYGLĄD", "PETY", "hacksyZOLTEGO", "ZDOBYCZ", "BEZPIECZEŃSTWO", "MUZYKA", "#INFO"};
     static final Item[] ICONS = {Items.DIAMOND_SWORD, Items.BONE, Items.ENDER_EYE, Items.DIAMOND_PICKAXE, Items.SHIELD, Items.JUKEBOX, Items.BOOK};
     static final int MUSIC_TAB = 5, INFO_TAB = 6;
+    static final String[] TAB_ICONS = {"tab_look", "tab_pets", "tab_hacks", "tab_loot", "tab_safe", "tab_music", "tab_info"};
     static final String[] PK = {"p.diamond", "p.netherite", "p.gold", "p.iron", "p.emerald", "p.ores", "p.clear"};
 
     interface Click { void on(double mx, double my, int btn); }
@@ -71,8 +72,8 @@ public class MenuScreen extends Screen {
     }
 
     int cardCol(int rgb) {
-        int a = 60 + (int) (Mods.THEME.n("opacity") * 1.3);
-        return (Math.min(235, a) << 24) | rgb;
+        int a = 170 + (int) (Mods.THEME.n("opacity") * 0.45);
+        return (Math.min(238, a) << 24) | rgb;
     }
 
     // ===== pomocnicze =====
@@ -122,10 +123,19 @@ public class MenuScreen extends Screen {
 
     int settingH(Setting s, int iw) {
         return switch (s.kind) {
-            case Setting.INFO -> textRenderer.wrapLines(Text.literal(Lang.t(s.label)), iw).size() * 10 + 10;
+            case Setting.INFO -> textRenderer.wrapLines(Text.literal(infoText(s)), iw).size() * 10 + 10;
             case Setting.BLOCKS -> blocksH(s, iw);
             default -> 26;
         };
+    }
+
+    static String infoText(Setting s) {
+        return s.dyn != null ? s.dyn.get() : Lang.t(s.label);
+    }
+
+    void blocksChanged(Setting s) {
+        Modules.dirty = true;
+        if (s == Mods.XRAY.get("blocks")) Xray.requestReload();
     }
 
     static void toast(String s) {
@@ -211,7 +221,7 @@ public class MenuScreen extends Screen {
             ctx.fill(x, ty, x + tw - 3, ty + 22, sel ? 0xE02A2A55 : hov ? 0xC01E1E3A : 0xA0141428);
             ctx.drawBorder(x, ty, tw - 3, 22, sel ? Theme.accent(i * 0.1f) : 0x30FFFFFF);
             if (sel) ctx.fill(x, ty + 20, x + tw - 3, ty + 22, Theme.accent(i * 0.1f));
-            ctx.drawItem(new ItemStack(ICONS[i]), x + 3, ty + 3);
+            Icons.draw(ctx, TAB_ICONS[i], x + 3, ty + 3, 16);
 
             String name = TABS[i];
             float k = Math.min(1f, (tw - 28f) / textRenderer.getWidth(name));
@@ -241,52 +251,57 @@ public class MenuScreen extends Screen {
 
     // ===== karta modulu =====
     int drawCard(DrawContext ctx, Mod m, int x, int y, int w, int mx, int my) {
-        int hh = 30;
+        int hh = 36;
         int iw = w - 28;
         int body = 0;
         if (m.open) for (Setting s : m.settings) body += settingH(s, iw);
-        int total = hh + body + (m.open && body > 0 ? 6 : 0);
+        int total = hh + body + (m.open && body > 0 ? 8 : 0);
         int accent = Theme.accent(y * 0.0015f);
 
-        ctx.fill(x, y, x + w, y + total, m.enabled ? cardCol(0x191935) : cardCol(0x121224));
-        ctx.fill(x, y, x + 3, y + total, m.enabled ? accent : 0xFF3A3A55);
-        ctx.drawBorder(x, y, w, total, 0x40FFFFFF);
+        ctx.fill(x, y, x + w, y + total, cardCol(0x13132A));
+        ctx.fill(x, y, x + w, y + hh, cardCol(m.enabled ? 0x2A2A52 : 0x1E1E3A));
+        ctx.fill(x, y, x + 4, y + total, m.enabled ? accent : 0xFF3A3A55);
+        ctx.drawBorder(x, y, w, total, m.enabled ? Theme.alpha(accent, 170) : 0x50FFFFFF);
         boolean hov = in(mx, my, x, y, w, hh) && my >= cTop && my <= cBottom;
-        if (hov) ctx.fill(x + 3, y, x + w, y + hh, 0x18FFFFFF);
+        if (hov) ctx.fill(x + 4, y, x + w, y + hh, 0x1AFFFFFF);
 
-        ctx.drawItem(new ItemStack(m.icon), x + 10, y + 7);
-        ctx.drawTextWithShadow(textRenderer, Text.literal(m.name()).formatted(Formatting.BOLD), x + 32, y + 5,
+        ctx.fill(x + 10, y + 6, x + 34, y + 30, 0xFF0C0C1C);
+        ctx.drawBorder(x + 10, y + 6, 24, 24, m.enabled ? accent : 0x60FFFFFF);
+        Icons.draw(ctx, m.id, x + 12, y + 8, 20);
+        ctx.drawTextWithShadow(textRenderer, Text.literal(m.name()).formatted(Formatting.BOLD), x + 42, y + 7,
                 m.enabled ? accent : 0xFFFFFFFF);
-        ctx.drawText(textRenderer, textRenderer.trimToWidth(m.desc(), w - 32 - 100), x + 32, y + 17, 0xFF9A9ABB, false);
+        ctx.drawText(textRenderer, textRenderer.trimToWidth(m.desc(), w - 42 - 100), x + 42, y + 21, 0xFFA0A0C4, false);
 
         reg(x, y, w, hh, true, (a, b, c) -> {
             if (m.hasSwitch) toggle(m);
             else m.open = !m.open;
         });
-        // plus/minus
         int ax = x + w - (m.hasSwitch ? 74 : 28);
-        ctx.fill(ax, y + 7, ax + 16, y + 23, 0xFF24243F);
-        ctx.drawBorder(ax, y + 7, 16, 16, 0x50FFFFFF);
-        ctx.drawCenteredTextWithShadow(textRenderer, m.open ? "-" : "+", ax + 8, y + 11, 0xFFFFFFFF);
-        reg(ax, y + 7, 16, 16, true, (a, b, c) -> m.open = !m.open);
-        // przelacznik
+        ctx.fill(ax, y + 10, ax + 16, y + 26, 0xFF24243F);
+        ctx.drawBorder(ax, y + 10, 16, 16, 0x60FFFFFF);
+        ctx.drawCenteredTextWithShadow(textRenderer, m.open ? "-" : "+", ax + 8, y + 14, 0xFFFFFFFF);
+        reg(ax, y + 10, 16, 16, true, (a, b, c) -> m.open = !m.open);
         if (m.hasSwitch) {
-            int sx = x + w - 46, sy = y + 8;
+            int sx = x + w - 46, sy = y + 11;
             boolean on = m.enabled;
             ctx.fill(sx, sy, sx + 34, sy + 14, on ? accent : 0xFF3A3A55);
-            ctx.drawBorder(sx, sy, 34, 14, 0x60FFFFFF);
+            ctx.drawBorder(sx, sy, 34, 14, 0x70FFFFFF);
             ctx.fill(on ? sx + 20 : sx + 2, sy + 2, on ? sx + 32 : sx + 14, sy + 12, 0xFFFFFFFF);
             reg(sx, sy, 34, 14, true, (a, b, c) -> toggle(m));
         }
 
-        if (m.open) {
-            int sy = y + hh;
-            for (Setting s : m.settings) {
-                drawSetting(ctx, s, x + 14, sy, iw, mx, my);
-                sy += settingH(s, iw);
+        if (m.open && body > 0) {
+            ctx.fill(x + 4, y + hh, x + w, y + total, 0x55000000);
+            int sy = y + hh + 2;
+            for (int i = 0; i < m.settings.size(); i++) {
+                Setting st = m.settings.get(i);
+                int rh = settingH(st, iw);
+                drawSetting(ctx, st, x + 14, sy, iw, mx, my);
+                sy += rh;
+                if (i < m.settings.size() - 1) ctx.fill(x + 14, sy - 1, x + w - 10, sy, 0x1CFFFFFF);
             }
         }
-        return y + total + 8;
+        return y + total + 12;
     }
 
     void toggle(Mod m) {
@@ -365,10 +380,12 @@ public class MenuScreen extends Screen {
             case Setting.TEXT -> {
                 int fw = iw >= 480 ? 220 : iw / 2;
                 int fx = lx + iw - fw;
-                if (s.label.equals("s.query")) {
-                    ctx.drawTextWithShadow(textRenderer, textRenderer.trimToWidth(Lang.t(s.label), iw - fw - 8), lx, y + 9, 0xFFDDDDEE);
+                String lab = Lang.t(s.label);
+                boolean left = s.label.equals("s.query") || textRenderer.getWidth(lab) > fw - 12;
+                if (left) {
+                    ctx.drawTextWithShadow(textRenderer, textRenderer.trimToWidth(lab, iw - fw - 8), lx, y + 9, 0xFFDDDDEE);
                 }
-                drawInput(ctx, s, fx, y + 3, fw);
+                drawInput(ctx, s, fx, y + 3, fw, left);
             }
             case Setting.ACTION -> {
                 int bx = lx, bw = iw;
@@ -381,7 +398,7 @@ public class MenuScreen extends Screen {
                 });
             }
             case Setting.INFO -> {
-                List<OrderedText> lines = textRenderer.wrapLines(Text.literal(Lang.t(s.label)), iw);
+                List<OrderedText> lines = textRenderer.wrapLines(Text.literal(infoText(s)), iw);
                 for (int i = 0; i < lines.size(); i++) {
                     ctx.drawTextWithShadow(textRenderer, lines.get(i), lx, y + 5 + i * 10, 0xFFAAAAC8);
                 }
@@ -392,6 +409,10 @@ public class MenuScreen extends Screen {
     }
 
     void drawInput(DrawContext ctx, Setting s, int fx, int fy, int fw) {
+        drawInput(ctx, s, fx, fy, fw, false);
+    }
+
+    void drawInput(DrawContext ctx, Setting s, int fx, int fy, int fw, boolean quietHint) {
         boolean f = focus == s;
         ctx.fill(fx, fy, fx + fw, fy + 20, 0xFF1E1E36);
         ctx.drawBorder(fx, fy, fw, 20, f ? Theme.accent(0f) : 0xFF44445A);
@@ -399,7 +420,7 @@ public class MenuScreen extends Screen {
         if (f && (System.currentTimeMillis() / 500) % 2 == 0) shown += "_";
         while (textRenderer.getWidth(shown) > fw - 10 && shown.length() > 1) shown = shown.substring(1);
         if (s.text.isEmpty() && !f) {
-            String h = textRenderer.trimToWidth(Lang.t(s.hint.isEmpty() ? "s.nick" : s.hint), fw - 10);
+            String h = quietHint ? "..." : textRenderer.trimToWidth(Lang.t(s.hint.isEmpty() ? "s.nick" : s.hint), fw - 10);
             ctx.drawText(textRenderer, h, fx + 5, fy + 6, 0xFF70708A, false);
         } else {
             ctx.drawTextWithShadow(textRenderer, shown, fx + 5, fy + 6, 0xFFFFFFFF);
@@ -421,7 +442,7 @@ public class MenuScreen extends Screen {
             final String key = PK[i];
             reg(bx, by, bw, 18, true, (a, b, c) -> {
                 Esp.preset(key, s);
-                Modules.dirty = true;
+                blocksChanged(s);
                 Config.save();
             });
         }
@@ -443,7 +464,7 @@ public class MenuScreen extends Screen {
             final String id = ids.get(i);
             reg(bx, by, bw, 15, true, (a, b, c) -> {
                 s.blocks.remove(id);
-                Modules.dirty = true;
+                blocksChanged(s);
                 Config.save();
             });
         }
@@ -457,7 +478,7 @@ public class MenuScreen extends Screen {
         ctx.fill(x, y, x + w, y + total, cardCol(0x191935));
         ctx.fill(x, y, x + 3, y + total, accent);
         ctx.drawBorder(x, y, w, total, 0x40FFFFFF);
-        ctx.drawItem(new ItemStack(Items.COMPASS), x + 10, y + 7);
+        Icons.draw(ctx, "lang", x + 10, y + 5, 22);
         ctx.drawTextWithShadow(textRenderer, Text.literal(Lang.t("menu.lang")).formatted(Formatting.BOLD), x + 32, y + 11, accent);
         int cell = (w - 28 - 3 * 8) / 4;
         for (int i = 0; i < 4; i++) {
@@ -594,7 +615,7 @@ public class MenuScreen extends Screen {
             Identifier ident = id.isEmpty() ? null : Identifier.tryParse("minecraft:" + id);
             if (ident != null && Registries.BLOCK.containsId(ident)) {
                 s.blocks.add(id);
-                Modules.dirty = true;
+                blocksChanged(s);
             } else if (!id.isEmpty()) {
                 toast("Nie ma takiego bloku: " + id);
             }

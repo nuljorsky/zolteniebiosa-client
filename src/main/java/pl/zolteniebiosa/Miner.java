@@ -14,9 +14,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-// Wbudowany "Baritone" - uproszczony automatyczny kopacz (bez prawdziwego pathfindingu)
+// Wbudowany "Baritone": automatyczny kopacz ze schodkami w dol/gore i szukaniem rud przez zaladowane chunki.
 public class Miner {
     public static boolean active = false;
     private static BlockPos target = null;
@@ -24,6 +25,7 @@ public class Miner {
     private static Vec3d lastPos = Vec3d.ZERO;
     private static Direction heading = Direction.NORTH;
     private static final Set<BlockPos> ignored = new HashSet<>();
+    public static String status = "";
 
     private static void msg(String s) {
         MinecraftClient mc = MinecraftClient.getInstance();
@@ -39,11 +41,13 @@ public class Miner {
         still = 0;
         ignored.clear();
         heading = mc.player.getHorizontalFacing();
+        status = "Start";
         msg("§aKopacz włączony. Trzymaj kilof w ręce. Wyłączasz go przełącznikiem w menu (N).");
     }
 
     public static void stop() {
         active = false;
+        status = "Wyłączony";
         release();
     }
 
@@ -71,6 +75,22 @@ public class Miner {
         return r;
     }
 
+    // na jakiej wysokosci najlepiej szukac danej rudy
+    private static int preferredY(Set<Block> want) {
+        for (Block b : want) {
+            String p = Registries.BLOCK.getId(b).getPath();
+            if (p.contains("diamond") || p.contains("redstone")) return -58;
+            if (p.contains("gold")) return -16;
+            if (p.contains("lapis")) return 0;
+            if (p.contains("iron")) return 16;
+            if (p.contains("copper")) return 48;
+            if (p.contains("coal")) return 45;
+            if (p.contains("emerald")) return 100;
+            if (p.contains("ancient_debris")) return 15;
+        }
+        return Integer.MIN_VALUE;
+    }
+
     private static boolean solid(MinecraftClient mc, BlockPos b) {
         BlockState s = mc.world.getBlockState(b);
         return !s.getCollisionShape(mc.world, b).isEmpty();
@@ -80,28 +100,18 @@ public class Miner {
         return mc.world.getBlockState(b).getFluidState().isIn(FluidTags.LAVA);
     }
 
-    private static void findTarget(MinecraftClient mc, BlockPos pos) {
+    private static void findTarget(MinecraftClient mc, BlockPos pos, Set<Block> want) {
         target = null;
-        Set<Block> want = resolve(Mods.BARITONE.txt("block"));
         if (want.isEmpty()) return;
-        int r = Mods.BARITONE.n("radius");
-        int minY = Math.max(mc.world.getBottomY(), pos.getY() - r);
-        int maxY = Math.min(mc.world.getTopYInclusive(), pos.getY() + 3);
+        int r = Mods.BARITONE.b("unlimited") ? 400 : Mods.BARITONE.n("radius");
+        List<BlockPos> list = Scan.find(mc.world, pos, r, want, 3000);
         double best = Double.MAX_VALUE;
-        BlockPos.Mutable mp = new BlockPos.Mutable();
-        for (int x = pos.getX() - r; x <= pos.getX() + r; x++) {
-            for (int z = pos.getZ() - r; z <= pos.getZ() + r; z++) {
-                for (int y = minY; y <= maxY; y++) {
-                    mp.set(x, y, z);
-                    if (!want.contains(mc.world.getBlockState(mp).getBlock())) continue;
-                    BlockPos im = mp.toImmutable();
-                    if (ignored.contains(im)) continue;
-                    double d = im.getSquaredDistance(pos);
-                    if (d < best) {
-                        best = d;
-                        target = im;
-                    }
-                }
+        for (BlockPos im : list) {
+            if (ignored.contains(im)) continue;
+            double d = im.getSquaredDistance(pos);
+            if (d < best) {
+                best = d;
+                target = im;
             }
         }
     }
@@ -151,20 +161,34 @@ public class Miner {
         }
         tick++;
         BlockPos pos = p.getBlockPos();
-        if (target == null || mc.world.getBlockState(target).isAir() || tick % 40 == 1) findTarget(mc, pos);
+        Set<Block> want = resolve(Mods.BARITONE.txt("block"));
+        if (target == null || mc.world.getBlockState(target).isAir() || tick % 40 == 1) findTarget(mc, pos, want);
 
         mc.options.attackKey.setPressed(false);
 
-        // cel w zasiegu ramienia: celuj i kop (po drodze zniknie to, co zasłania)
+        // cel w zasiegu ramienia: kop go bezposrednio
+        if (target != null && p.getEyePos().distanceTo(Vec3d.ofCenter(target)) <= 4.2) {
+            status = "Kopię cel";
+            mine(mc, p, target);
+            return;
+        }
+
+        // cel docelowy: znaleziona ruda albo wysokosc, na ktorej zwykle wystepuje
+        BlockPos goal;
         if (target != null) {
-            Vec3d center = Vec3d.ofCenter(target);
-            if (p.getEyePos().distanceTo(center) <= 4.2) {
-                mine(mc, p, target);
-                return;
+            goal = target;
+            status = "Idę do rudy";
+        } else {
+            int py = preferredY(want);
+            if (py != Integer.MIN_VALUE && Math.abs(pos.getY() - py) > 2) {
+                goal = pos.offset(heading, 4).withY(py);
+                status = "Schodzę/wchodzę na wysokość rudy (Y " + py + ")";
+            } else {
+                goal = pos.offset(heading, 6);
+                status = "Kopię tunel i szukam rudy";
             }
         }
 
-        BlockPos goal = target != null ? target : pos.offset(heading, 6);
         int dx = goal.getX() - pos.getX(), dz = goal.getZ() - pos.getZ(), dy = goal.getY() - pos.getY();
         Direction dir;
         if (dx == 0 && dz == 0) {
@@ -178,35 +202,53 @@ public class Miner {
                 else release();
                 return;
             }
-            if (target != null) ignored.add(target);
-            target = null;
-            return;
+            dir = heading;
         } else if (Math.abs(dx) >= Math.abs(dz)) {
             dir = dx > 0 ? Direction.EAST : Direction.WEST;
         } else {
             dir = dz > 0 ? Direction.SOUTH : Direction.NORTH;
         }
+        heading = dir;
 
-        BlockPos feet = pos.offset(dir), head = feet.up();
-        if (safe && (lava(mc, feet) || lava(mc, head) || lava(mc, feet.down())
-                || lava(mc, feet.offset(dir)) || lava(mc, feet.offset(dir).up()))) {
-            off("Lawa na drodze - kopacz zatrzymany.");
+        int vy = dy < -1 ? -1 : dy > 1 ? 1 : 0;
+        BlockPos col = pos.offset(dir);          // kolumna przed nami
+        BlockPos newFeet = col.up(vy);
+        BlockPos newHead = newFeet.up();
+
+        if (safe) {
+            for (int k = -2; k <= 3; k++) {
+                if (lava(mc, col.up(k + vy)) || lava(mc, col.offset(dir).up(k + vy))) {
+                    off("Lawa na drodze - kopacz zatrzymany.");
+                    return;
+                }
+            }
+        }
+
+        // kolejnosc kopania: gora -> dol
+        if (vy > 0 && solid(mc, pos.up(2))) {
+            mine(mc, p, pos.up(2));
             return;
         }
-        if (solid(mc, head)) {
-            mine(mc, p, head);
+        if (vy < 0 && solid(mc, col.up())) {
+            mine(mc, p, col.up());
             return;
         }
-        if (solid(mc, feet)) {
-            mine(mc, p, feet);
+        if (solid(mc, newHead)) {
+            mine(mc, p, newHead);
             return;
         }
-        if (safe && !solid(mc, feet.down()) && !solid(mc, feet.down(2)) && !solid(mc, feet.down(3))) {
+        if (solid(mc, newFeet)) {
+            mine(mc, p, newFeet);
+            return;
+        }
+        if (safe && vy >= 0 && !solid(mc, newFeet.down()) && !solid(mc, newFeet.down(2)) && !solid(mc, newFeet.down(3))) {
             off("Przepaść przed tobą - kopacz zatrzymany.");
             return;
         }
-        aim(p, Vec3d.ofCenter(feet).add(0, 0.3, 0));
+
+        aim(p, Vec3d.ofCenter(newFeet).add(0, 0.3, 0));
         mc.options.forwardKey.setPressed(true);
+        mc.options.jumpKey.setPressed(vy > 0);
         if (p.getPos().squaredDistanceTo(lastPos) < 0.0004) still++;
         else still = 0;
         lastPos = p.getPos();

@@ -12,6 +12,7 @@ public class Setting {
     public String text = "", hint = "";
     public boolean flag;
     public Runnable action, onCommit;
+    public java.util.function.Supplier<String> dyn;
     public final LinkedHashSet<String> blocks = new LinkedHashSet<>();
 
     private Setting(int kind, String key, String label) {
@@ -58,6 +59,12 @@ public class Setting {
 
     public static Setting info(String key, String textKey) {
         return new Setting(INFO, key, textKey);
+    }
+
+    public static Setting dynInfo(String key, java.util.function.Supplier<String> sup) {
+        Setting s = new Setting(INFO, key, key);
+        s.dyn = sup;
+        return s;
     }
 
     public static Setting blocks(String key, String label, String... defs) {

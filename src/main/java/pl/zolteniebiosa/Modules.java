@@ -18,8 +18,6 @@ import java.util.List;
 public class Modules {
     private static int ticks = 0;
     private static boolean fbApplied = false;
-    private static boolean zooming = false;
-    private static int oldFov = 70;
     public static Item[] saved = null;
     public static volatile boolean dirty = false;
 
@@ -28,11 +26,7 @@ public class Modules {
         if (mc.player == null || mc.world == null) return;
         ticks++;
 
-        if (Mods.NIGHT.enabled) {
-            mc.world.getLevelProperties().setTimeOfDay(18000L);
-        }
-
-        if (Mods.FULLBRIGHT.enabled) {
+        if (Mods.FULLBRIGHT.enabled || Mods.XRAY.enabled) {
             if (ticks % 100 == 1) {
                 mc.player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 400, 0, false, false, false));
                 fbApplied = true;
@@ -40,19 +34,6 @@ public class Modules {
         } else if (fbApplied) {
             mc.player.removeStatusEffect(StatusEffects.NIGHT_VISION);
             fbApplied = false;
-        }
-
-        // zoom (klawisz C)
-        boolean zk = ZolteClient.ZOOM != null && ZolteClient.ZOOM.isPressed() && mc.currentScreen == null;
-        if (Mods.ZOOM.enabled && zk) {
-            if (!zooming) {
-                oldFov = mc.options.getFov().getValue();
-                zooming = true;
-            }
-            mc.options.getFov().setValue(Mods.ZOOM.n("fov"));
-        } else if (zooming) {
-            mc.options.getFov().setValue(oldFov);
-            zooming = false;
         }
 
         // autosprint
@@ -63,6 +44,10 @@ public class Modules {
         }
 
         Miner.tick(mc);
+        KillAura.tick(mc);
+        AutoWater.tick(mc);
+        Market.tick(mc);
+        Xray.tick(mc);
 
         if (Mods.AUTOLEAVE.enabled && mc.getNetworkHandler() != null) {
             int dist = Mods.AUTOLEAVE.n("dist");
@@ -80,12 +65,12 @@ public class Modules {
         if (dirty || ticks % 40 == 0) {
             dirty = false;
             Esp.espHits = Mods.BLOCKESP.enabled ? Esp.scan(Mods.BLOCKESP, mc) : List.of();
-            Esp.xrayHits = Mods.XRAY.enabled ? Esp.scan(Mods.XRAY, mc) : List.of();
         }
 
         if (ticks % 40 == 5 && Mods.SKIN.enabled) {
             Skin.apply(Mods.SKIN.txt("name"));
         }
+        if (ticks % 40 == 7) Music.setVolume();
         if (ticks % 1200 == 0) Config.save();
     }
 
@@ -98,9 +83,10 @@ public class Modules {
         if (tg == 1 && isP) return;
         float vol = Mods.HITSOUND.n("volume") / 100f;
         int s = Mods.HITSOUND.mode("sound");
-        if (s == 0) play(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, vol, 1.7f);
-        else if (s == 1) play(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, vol, 1.3f);
-        else play(SoundEvents.ENTITY_CAT_PURREOW, vol, 1.6f);
+        if (s == 0) play(SoundEvents.ENTITY_PLAYER_ATTACK_CRIT, vol, 1.25f);
+        else if (s == 1) play(SoundEvents.BLOCK_NOTE_BLOCK_PLING, vol, 2.0f);
+        else if (s == 2) play(SoundEvents.BLOCK_NOTE_BLOCK_BELL, vol, 1.7f);
+        else play(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, vol, 1.8f);
     }
 
     private static void play(Object snd, float vol, float pitch) {
@@ -109,7 +95,12 @@ public class Modules {
         SoundEvent ev = null;
         if (snd instanceof SoundEvent se) ev = se;
         else if (snd instanceof RegistryEntry<?> re && re.value() instanceof SoundEvent se2) ev = se2;
-        if (ev != null) mc.player.playSound(ev, vol, pitch);
+        if (ev == null) return;
+        // glosnosc ponad 100% = kilka warstw dzwieku
+        int layers = Math.max(1, (int) Math.ceil(vol));
+        for (int i = 0; i < layers; i++) {
+            mc.player.playSound(ev, Math.min(1f, vol - i), pitch);
+        }
     }
 
     // ===== wbudowany kopacz (Baritone) =====

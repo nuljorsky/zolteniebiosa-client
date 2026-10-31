@@ -18,7 +18,6 @@ import org.lwjgl.glfw.GLFW;
 public class ZolteClient implements ClientModInitializer {
     public static KeyBinding MENU;
     public static KeyBinding RESTORE;
-    public static KeyBinding ZOOM;
 
     @Override
     public void onInitializeClient() {
@@ -28,8 +27,6 @@ public class ZolteClient implements ClientModInitializer {
                 "key.zolteniebiosa.menu", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_N, "key.categories.zolteniebiosa"));
         RESTORE = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.zolteniebiosa.restore", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_J, "key.categories.zolteniebiosa"));
-        ZOOM = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.zolteniebiosa.zoom", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_C, "key.categories.zolteniebiosa"));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (MENU.wasPressed()) {
@@ -46,6 +43,7 @@ public class ZolteClient implements ClientModInitializer {
         HudRenderCallback.EVENT.register((ctx, tc) -> {
             Weather.render(ctx);
             Crosshair.render(ctx);
+            Hud2.render(ctx);
             Hud.render(ctx, tc);
             NameTags.render(ctx, tc);
         });
@@ -60,10 +58,14 @@ public class ZolteClient implements ClientModInitializer {
                 ScreenEvents.afterRender(screen).register((scr, ctx, mx, my, td) -> Splash.fade(ctx)));
 
         // zapis ustawien przy wyjsciu z gry / swiata
-        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> Config.save());
+        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
+            Config.save();
+            Audio.shutdown();
+        });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> Config.save());
 
         Rpc.init();
         Sync.init();
+        Audio.warmUp();
     }
 }

@@ -4,6 +4,6 @@
   "package": "pl.zolteniebiosa.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
-  "client": ["ViewModelMixin", "NameProtectMixin", "SkinMixin", "CrosshairMixin", "SplashMixin", "NoPushMixin", "ClientPushMixin"],
+  "client": ["ViewModelMixin", "NameProtectMixin", "SkinMixin", "CrosshairMixin", "SplashMixin", "NoPushMixin", "ClientPushMixin", "XrayBlockMixin", "XraySodiumMixin"],
   "injectors": { "defaultRequire": 0 }
 }

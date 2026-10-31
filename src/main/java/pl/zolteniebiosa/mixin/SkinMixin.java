@@ -26,7 +26,7 @@ public class SkinMixin {
             skinName = Mods.SKIN.enabled ? Mods.SKIN.txt("name") : "";
             cape = Mods.CAPE.enabled ? Mods.CAPE.mode("cape") : 0;
         } else {
-            Sync.Peer p = Sync.peers.get(self.getUuid());
+            Sync.Peer p = Sync.peerFor(self);
             if (p == null) return;
             skinName = p.skin();
             cape = p.cape();

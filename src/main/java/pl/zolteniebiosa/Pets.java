@@ -53,6 +53,7 @@ public class Pets {
         if (broken || !Mods.PET.enabled) return;
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.world == null || mc.player == null) return;
+        if (mc.options.getPerspective().isFirstPerson()) return;
         try {
             int k = Mods.PET.mode("pet");
             if (pet == null || kind != k || petWorld != mc.world) {

@@ -17,6 +17,14 @@ public class Rpc {
     private static volatile String state = "Minecraft 1.21.4";
     private static RandomAccessFile pipe;
     private static String connectedId = "";
+    public static volatile String status = "Wyłączone";
+    private static final Object LOCK = new Object();
+
+    public static void connectNow() {
+        synchronized (LOCK) {
+            LOCK.notifyAll();
+        }
+    }
 
     public static void init() {
         Thread t = new Thread(Rpc::loop, "ZTN-RPC");
@@ -40,18 +48,28 @@ public class Rpc {
             try {
                 String id = Mods.DISCORD.txt("appid").trim();
                 if (Mods.DISCORD.enabled && !id.isEmpty()) {
-                    if (pipe == null || !id.equals(connectedId)) connect(id);
+                    if (pipe == null || !id.equals(connectedId)) {
+                        status = "Łączę z Discordem...";
+                        connect(id);
+                    }
                     activity(startTs);
-                } else if (pipe != null) {
-                    close();
+                    status = "Połączono - status widoczny na Discordzie";
+                } else {
+                    if (pipe != null) close();
+                    status = !Mods.DISCORD.enabled ? "Wyłączone" : "Wklej Application ID (patrz instrukcja)";
                 }
-                Thread.sleep(15000);
+                synchronized (LOCK) {
+                    LOCK.wait(15000);
+                }
             } catch (InterruptedException e) {
                 return;
             } catch (Throwable e) {
                 close();
+                status = "Błąd: Discord nie jest uruchomiony albo złe Application ID (" + e.getClass().getSimpleName() + ")";
                 try {
-                    Thread.sleep(15000);
+                    synchronized (LOCK) {
+                        LOCK.wait(15000);
+                    }
                 } catch (InterruptedException ie) {
                     return;
                 }

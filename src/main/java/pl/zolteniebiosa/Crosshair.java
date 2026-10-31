@@ -27,7 +27,7 @@ public class Crosshair {
             case 2 -> {
                 for (int deg = 0; deg < 360; deg += 5) {
                     double r = Math.toRadians(deg);
-                    int px = cx + (int) Math.round(Math.cos(r) * size), py = cy + (int) Math.round(Math.sin(r) * size);
+                    int px = cx + (int) Math.round(Math.cos(r) * (size + 1)), py = cy + (int) Math.round(Math.sin(r) * (size + 1));
                     ctx.fill(px - th / 2, py - th / 2, px - th / 2 + th, py - th / 2 + th, col);
                 }
             }
@@ -40,7 +40,7 @@ public class Crosshair {
                 }
             }
             default -> {
-                int len = size * 2 + gap;
+                int len = size + gap + 4;
                 box(ctx, cx - len, cy - a, cx - gap, cy - a + th, col);
                 box(ctx, cx + gap, cy - a, cx + len, cy - a + th, col);
                 box(ctx, cx - a, cy - len, cx - a + th, cy - gap, col);

@@ -200,5 +200,46 @@ public class Lang {
         a("s.mstop", "Zatrzymaj muzykę", "Stop music", "Musik stoppen", "Остановить музыку");
         a("s.mnext", "Następny utwór", "Next track", "Nächster Titel", "Следующий трек");
         a("o.none", "Brak", "None", "Keine", "Нет");
+        // etap 4
+        a("m.hitboxes", "Hitboxy", "Hitboxes", "Hitboxen", "Хитбоксы");
+        a("d.hitboxes", "Kolorowe hitboxy graczy i mobów przez ściany.", "Colored hitboxes of players and mobs through walls.", "Farbige Hitboxen von Spielern und Mobs durch Wände.", "Цветные хитбоксы игроков и мобов сквозь стены.");
+        a("m.killaura", "Kill Aura", "Kill Aura", "Kill Aura", "Kill Aura");
+        a("d.killaura", "Automatycznie bije cele w zasięgu.", "Automatically attacks targets in range.", "Greift Ziele in Reichweite automatisch an.", "Автоматически бьёт цели в радиусе.");
+        a("i.killaura", "Domyślnie bije tylko moby. Na większości serwerów za to jest ban, używaj tam, gdzie wolno.", "Attacks only mobs by default. Most servers ban this, use it only where allowed.", "Greift standardmäßig nur Mobs an. Auf den meisten Servern verboten.", "По умолчанию бьёт только мобов. На большинстве серверов за это бан.");
+        a("m.autowater", "Auto Water (MLG)", "Auto Water (MLG)", "Auto Water (MLG)", "Авто-вода (MLG)");
+        a("d.autowater", "Przy spadaniu sam wylewa wodę pod siebie.", "Places water under you when you fall.", "Platziert beim Fallen Wasser unter dir.", "При падении сам выливает воду под вас.");
+        a("i.autowater", "Potrzebujesz wiaderka z wodą na pasku szybkiego dostępu. Po lądowaniu zbiera wodę z powrotem. Przy bardzo dużych wysokościach może nie zdążyć.", "You need a water bucket in your hotbar. It picks the water back up after landing. From very high falls it may be too late.", "Du brauchst einen Wassereimer in der Hotbar. Nach der Landung sammelt er das Wasser wieder ein.", "Нужно ведро воды в панели быстрого доступа. После приземления собирает воду обратно.");
+        a("m.keystrokes", "Klawisze i CPS", "Keystrokes and CPS", "Tasten und CPS", "Клавиши и CPS");
+        a("d.keystrokes", "Pokazuje WASD, spację i kliknięcia na sekundę.", "Shows WASD, space and clicks per second.", "Zeigt WASD, Leertaste und Klicks pro Sekunde.", "Показывает WASD, пробел и клики в секунду.");
+        a("m.armorhud", "Pancerz na ekranie", "Armor HUD", "Rüstungsanzeige", "Броня на экране");
+        a("d.armorhud", "Wytrzymałość zbroi zawsze widoczna.", "Armor durability always visible.", "Haltbarkeit der Rüstung immer sichtbar.", "Прочность брони всегда видна.");
+        a("m.effects", "Efekty (mikstury)", "Potion effects", "Trank-Effekte", "Эффекты зелий");
+        a("d.effects", "Lista aktywnych efektów z czasem.", "List of active effects with timers.", "Liste aktiver Effekte mit Zeit.", "Список активных эффектов с таймером.");
+        a("m.market", "Żółty Rynek", "Yellow Market", "Gelber Markt", "Жёлтый рынок");
+        a("d.market", "Automatyczne kupowanie z rynku serwera.", "Automatic buying from the server market.", "Automatisches Kaufen auf dem Server-Markt.", "Автопокупка на рынке сервера.");
+        a("i.market", "Otwórz menu rynku na serwerze (albo włącz auto-otwieranie), ustaw filtr nazwy, maksymalną cenę (np. 10k) i opóźnienie. Moduł klika pasujące przedmioty i potwierdza zakup. Dopasuj do swojego serwera (slot odświeżania, słowa potwierdzenia).", "Open the server market menu (or enable auto-open), set a name filter, max price (e.g. 10k) and delay. The module clicks matching items and confirms the purchase. Adjust it to your server (refresh slot, confirm words).", "Öffne das Markt-Menü des Servers (oder Auto-Öffnen), stelle Namensfilter, Maximalpreis (z.B. 10k) und Verzögerung ein. Das Modul klickt passende Items und bestätigt den Kauf.", "Откройте меню рынка (или включите авто-открытие), задайте фильтр, макс. цену (напр. 10k) и задержку. Модуль кликает подходящие предметы и подтверждает покупку.");
+        a("i.pet", "Zwierzak jest ukryty w widoku z pierwszej osoby, żeby nie przeszkadzał. Zobaczysz go w widoku z tyłu (F5).", "The pet is hidden in first person so it never blocks your view. You see it in third person (F5).", "Das Haustier ist in der Ego-Perspektive versteckt. Sichtbar in der 3. Person (F5).", "Питомец скрыт от первого лица, чтобы не мешать. Виден от третьего лица (F5).");
+        a("d.xray", "Prawdziwy xray: znikają wszystkie bloki oprócz wybranych.", "Real xray: all blocks vanish except the chosen ones.", "Echtes Xray: alle Blöcke verschwinden außer den gewählten.", "Настоящий xray: все блоки исчезают, кроме выбранных.");
+        a("i.xray", "Wybierz bloki, które mają zostać widoczne (domyślnie wszystkie rudy). Włącza też jasność. Jeśli z Sodium nie działa, użyj profilu bez Sodium.", "Pick the blocks that stay visible (all ores by default). Also turns on brightness. If it does not work with Sodium, use a profile without Sodium.", "Wähle die sichtbaren Blöcke (standardmäßig alle Erze). Schaltet auch Helligkeit ein. Falls es mit Sodium nicht geht, Profil ohne Sodium nutzen.", "Выберите видимые блоки (по умолчанию все руды). Включает и яркость. Если с Sodium не работает, используйте профиль без Sodium.");
+        a("d.hitsound", "Głośny dźwięk PvP przy trafieniu.", "Loud PvP sound when you hit.", "Lauter PvP-Sound beim Treffer.", "Громкий PvP-звук при ударе.");
+        a("s.cps", "Pokaż kliknięcia na sekundę", "Show clicks per second", "Klicks pro Sekunde zeigen", "Показать клики в секунду");
+        a("s.engine", "Silnik głosu", "Voice engine", "Sprach-Engine", "Движок голоса");
+        a("o.google", "Naturalny (online)", "Natural (online)", "Natürlich (online)", "Естественный (онлайн)");
+        a("o.windows", "Systemowy Windows", "Windows system", "Windows-System", "Системный Windows");
+        a("s.connect", "Połącz z Discordem teraz", "Connect to Discord now", "Jetzt mit Discord verbinden", "Подключиться к Discord");
+        a("s.refresh", "Odśwież teraz", "Refresh now", "Jetzt aktualisieren", "Обновить сейчас");
+        a("s.range", "Zasięg (x0.1 bloku)", "Range (x0.1 block)", "Reichweite (x0.1 Block)", "Радиус (x0.1 блока)");
+        a("s.rotate", "Obracaj się do celu", "Rotate to target", "Zum Ziel drehen", "Поворачиваться к цели");
+        a("s.unlimited", "Nieograniczony dystans", "Unlimited distance", "Unbegrenzte Entfernung", "Неограниченная дистанция");
+        a("s.mfilter", "Filtr nazwy/opisu (np. diament)", "Name/lore filter (e.g. diamond)", "Namens-/Lore-Filter (z.B. diamant)", "Фильтр названия (напр. алмаз)");
+        a("s.maxprice", "Maksymalna cena (np. 10k, puste = bez limitu)", "Max price (e.g. 10k, empty = no limit)", "Max. Preis (z.B. 10k, leer = unbegrenzt)", "Макс. цена (напр. 10k, пусто = без лимита)");
+        a("s.delay", "Opóźnienie kliknięć (ms)", "Click delay (ms)", "Klick-Verzögerung (ms)", "Задержка кликов (мс)");
+        a("s.refreshslot", "Slot odświeżania (-1 = brak)", "Refresh slot (-1 = none)", "Aktualisierungs-Slot (-1 = keiner)", "Слот обновления (-1 = нет)");
+        a("s.confirm", "Słowa potwierdzenia (po przecinku)", "Confirm words (comma separated)", "Bestätigungswörter (Komma)", "Слова подтверждения (через запятую)");
+        a("s.autoopen", "Automatycznie otwieraj rynek", "Auto-open the market", "Markt automatisch öffnen", "Автоматически открывать рынок");
+        a("s.command", "Komenda rynku (np. rynek)", "Market command (e.g. rynek)", "Markt-Befehl (z.B. rynek)", "Команда рынка (напр. rynek)");
+        a("i.baritone", "Wpisz blok (np. diamond_ore, kilka po przecinku) i włącz. Kopacz szuka go w całym załadowanym świecie (nieograniczony dystans), schodzi schodkami na właściwą wysokość i drąży tunel do rudy. Trzymaj kilof. Stop: przełącznik albo #baritone off. To uproszczona wersja, nie prawdziwy Baritone.", "Type a block (e.g. diamond_ore, several with commas) and switch on. The miner searches the whole loaded world (unlimited distance), digs stairs to the right height and tunnels to the ore. Hold a pickaxe. Stop: the switch or #baritone off. Simplified, not the real Baritone.", "Block eingeben (z.B. diamond_ore, mehrere mit Komma) und einschalten. Der Miner sucht in der ganzen geladenen Welt (unbegrenzt), gräbt Treppen zur richtigen Höhe und tunnelt zum Erz. Spitzhacke halten. Stopp: Schalter oder #baritone off.", "Введите блок (напр. diamond_ore, несколько через запятую) и включите. Копатель ищет по всему загруженному миру (без лимита), роет лестницу до нужной высоты и туннель к руде. Держите кирку. Стоп: переключатель или #baritone off.");
+        a("s.unlimited", "Nieograniczony dystans (cały załadowany świat)", "Unlimited distance (whole loaded world)", "Unbegrenzte Entfernung (ganze geladene Welt)", "Неограниченная дистанция (весь загруженный мир)");
+        a("s.reopen", "Ponownie otwieraj co (s)", "Reopen every (s)", "Erneut öffnen alle (s)", "Открывать заново каждые (с)");
     }
 }
