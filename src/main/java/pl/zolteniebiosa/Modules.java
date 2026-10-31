@@ -1,6 +1,5 @@
 package pl.zolteniebiosa;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -8,7 +7,6 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.sound.SoundEvent;
@@ -16,16 +14,17 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
 import java.util.List;
-import java.util.Random;
 
 public class Modules {
     private static int ticks = 0;
     private static boolean fbApplied = false;
-    private static final Random R = new Random();
+    private static boolean zooming = false;
+    private static int oldFov = 70;
     public static Item[] saved = null;
     public static volatile boolean dirty = false;
 
     public static void tick(MinecraftClient mc) {
+        Rpc.tick(mc);
         if (mc.player == null || mc.world == null) return;
         ticks++;
 
@@ -43,21 +42,27 @@ public class Modules {
             fbApplied = false;
         }
 
-        if (Mods.WEATHER.enabled) {
-            int d = Mods.WEATHER.n("density");
-            boolean snow = Mods.WEATHER.mode("type") == 1;
-            for (int i = 0; i < d * 3; i++) {
-                double x = mc.player.getX() + (R.nextDouble() - 0.5) * 24;
-                double y = mc.player.getY() + 2 + R.nextDouble() * 8;
-                double z = mc.player.getZ() + (R.nextDouble() - 0.5) * 24;
-                if (snow) {
-                    mc.world.addParticle(ParticleTypes.SNOWFLAKE, x, y, z,
-                            (R.nextDouble() - 0.5) * 0.02, -0.08, (R.nextDouble() - 0.5) * 0.02);
-                } else {
-                    mc.world.addParticle(ParticleTypes.FALLING_WATER, x, y, z, 0, -0.5, 0);
-                }
+        // zoom (klawisz C)
+        boolean zk = ZolteClient.ZOOM != null && ZolteClient.ZOOM.isPressed() && mc.currentScreen == null;
+        if (Mods.ZOOM.enabled && zk) {
+            if (!zooming) {
+                oldFov = mc.options.getFov().getValue();
+                zooming = true;
             }
+            mc.options.getFov().setValue(Mods.ZOOM.n("fov"));
+        } else if (zooming) {
+            mc.options.getFov().setValue(oldFov);
+            zooming = false;
         }
+
+        // autosprint
+        if (Mods.AUTOSPRINT.enabled && mc.currentScreen == null && mc.options.forwardKey.isPressed()
+                && !mc.player.isSneaking() && !mc.player.horizontalCollision
+                && mc.player.getHungerManager().getFoodLevel() > 6) {
+            mc.player.setSprinting(true);
+        }
+
+        Miner.tick(mc);
 
         if (Mods.AUTOLEAVE.enabled && mc.getNetworkHandler() != null) {
             int dist = Mods.AUTOLEAVE.n("dist");
@@ -81,6 +86,7 @@ public class Modules {
         if (ticks % 40 == 5 && Mods.SKIN.enabled) {
             Skin.apply(Mods.SKIN.txt("name"));
         }
+        if (ticks % 1200 == 0) Config.save();
     }
 
     // ===== trafienie =====
@@ -106,30 +112,22 @@ public class Modules {
         if (ev != null) mc.player.playSound(ev, vol, pitch);
     }
 
-    // ===== baritone =====
-    private static boolean hasBaritone() {
-        FabricLoader fl = FabricLoader.getInstance();
-        return fl.isModLoaded("baritone") || fl.isModLoaded("baritone-fabric") || fl.isModLoaded("baritone_unoptimized");
-    }
-
+    // ===== wbudowany kopacz (Baritone) =====
     public static void baritone(boolean on) {
         MinecraftClient mc = MinecraftClient.getInstance();
-        if (mc.player == null) return;
-        if (!hasBaritone()) {
-            mc.player.sendMessage(Text.literal("§e[ZolteNiebiosa] §cBaritone nie jest zainstalowany - wrzuć moda Baritone do folderu mods."), false);
+        if (mc.player == null) {
             Mods.BARITONE.enabled = false;
             return;
         }
-        String block = Mods.BARITONE.txt("block").trim();
         if (on) {
-            if (block.isEmpty()) {
+            if (Mods.BARITONE.txt("block").trim().isEmpty()) {
                 mc.player.sendMessage(Text.literal("§e[ZolteNiebiosa] §cWpisz nazwę bloku w ustawieniach Baritone."), false);
                 Mods.BARITONE.enabled = false;
                 return;
             }
-            mc.player.networkHandler.sendChatMessage("#mine " + block);
+            Miner.start();
         } else {
-            mc.player.networkHandler.sendChatMessage("#stop");
+            Miner.stop();
         }
     }
 

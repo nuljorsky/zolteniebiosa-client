@@ -24,8 +24,9 @@ public class MenuScreen extends Screen {
     static String toast = "";
     static long toastT = 0;
 
-    static final String[] TABS = {"WYGLĄD", "PETY", "hacksyZOLTEGO", "ZDOBYCZ", "BEZPIECZEŃSTWO", "#INFO"};
-    static final Item[] ICONS = {Items.DIAMOND_SWORD, Items.BONE, Items.ENDER_EYE, Items.DIAMOND_PICKAXE, Items.SHIELD, Items.BOOK};
+    static final String[] TABS = {"WYGLĄD", "PETY", "hacksyZOLTEGO", "ZDOBYCZ", "BEZPIECZEŃSTWO", "MUZYKA", "#INFO"};
+    static final Item[] ICONS = {Items.DIAMOND_SWORD, Items.BONE, Items.ENDER_EYE, Items.DIAMOND_PICKAXE, Items.SHIELD, Items.JUKEBOX, Items.BOOK};
+    static final int MUSIC_TAB = 5, INFO_TAB = 6;
     static final String[] PK = {"p.diamond", "p.netherite", "p.gold", "p.iron", "p.emerald", "p.ores", "p.clear"};
 
     interface Click { void on(double mx, double my, int btn); }
@@ -64,7 +65,14 @@ public class MenuScreen extends Screen {
 
     @Override
     public void renderBackground(DrawContext ctx, int mx, int my, float delta) {
-        ctx.fillGradient(0, 0, width, height, 0xF005050F, 0xF01C0B30);
+        int a = (int) (Mods.THEME.n("opacity") * 2.55);
+        ctx.fillGradient(0, 0, width, height, (a << 24) | 0x05050F, (a << 24) | 0x1C0B30);
+        if (Mods.THEME.b("bganim")) Splash.ambient(ctx, width, height, System.currentTimeMillis() - t0);
+    }
+
+    int cardCol(int rgb) {
+        int a = 60 + (int) (Mods.THEME.n("opacity") * 1.3);
+        return (Math.min(235, a) << 24) | rgb;
     }
 
     // ===== pomocnicze =====
@@ -141,11 +149,12 @@ public class MenuScreen extends Screen {
         int cw = Math.min(540, width - 30);
         int cx = (width - cw) / 2;
         int y = cTop + 6 - (int) scroll;
-        if (tab == 5) {
+        if (tab == INFO_TAB) {
             y = drawInfo(ctx, cx, y, cw, mx, my);
         } else {
             for (Mod m : Mods.ALL) if (m.cat == tab) y = drawCard(ctx, m, cx, y, cw, mx, my);
             if (tab == 0) y = drawLang(ctx, cx, y, cw, mx, my);
+            if (tab == MUSIC_TAB) y = drawMusic(ctx, cx, y, cw, mx, my);
         }
         int content = y + (int) scroll - cTop;
         maxScroll = Math.max(0, content - (cBottom - cTop) + 8);
@@ -156,6 +165,12 @@ public class MenuScreen extends Screen {
             ctx.drawCenteredTextWithShadow(textRenderer, toast, width / 2, height - 32, 0xFFFF7070);
         }
         ctx.drawCenteredTextWithShadow(textRenderer, Lang.t("menu.hint"), width / 2, height - 13, 0xFF8888AA);
+        PixelFont.yt(ctx, 8, height - 20, 1);
+        PixelFont.draw(ctx, "yt: zolteniebiosa", 34, height - 17, 2, 0xFFFFFFFF);
+        String dcs = "dc.crazy_ol1wk4";
+        int dw = PixelFont.width(dcs, 2);
+        PixelFont.dc(ctx, width - 34 - dw - 4, height - 20, 1);
+        PixelFont.draw(ctx, dcs, width - 8 - dw, height - 17, 2, 0xFFFFFFFF);
     }
 
     void sparkles(DrawContext ctx, long t) {
@@ -173,28 +188,23 @@ public class MenuScreen extends Screen {
     }
 
     void drawTitle(DrawContext ctx, long t) {
-        String title = "ZolteNiebiosa CLIENT";
-        ctx.getMatrices().push();
-        ctx.getMatrices().scale(2f, 2f, 1f);
-        int total = textRenderer.getWidth(Text.literal(title).formatted(Formatting.BOLD));
-        int cx = (int) (width / 4f - total / 2f);
-        for (int i = 0; i < title.length(); i++) {
-            Text ch = Text.literal(String.valueOf(title.charAt(i))).formatted(Formatting.BOLD);
-            float appear = Math.min(1f, (t - i * 45L) / 300f);
-            if (appear > 0.05f) {
-                int yy = 2 + (int) ((1 - appear) * -10) + (int) (Math.sin(t / 220.0 + i * 0.55) * 1.5);
-                ctx.drawTextWithShadow(textRenderer, ch, cx, yy, Theme.alpha(Theme.accent(i * 0.045f), (int) (255 * appear)));
-            }
-            cx += textRenderer.getWidth(ch);
+        int sc = 3;
+        int x = width / 2 - PixelFont.logoWidth(sc) / 2;
+        for (int k = 0; k < 3; k++) {
+            float p = Math.min(1f, Math.max(0f, (t - 150 - k * 180L) / 300f));
+            if (p <= 0f) continue;
+            int yy = 6 + (int) ((1f - p) * -12);
+            int xx = x + k * 6 * sc;
+            PixelFont.letter(ctx, k, xx + sc / 2, yy + sc / 2, sc, PixelFont.c(0x8A5A00, p));
+            PixelFont.letter(ctx, k, xx, yy, sc, PixelFont.c(0xFFD21F, p));
         }
-        ctx.getMatrices().pop();
     }
 
     void drawTabs(DrawContext ctx, int mx, int my, long t) {
-        int tw = Math.min(150, (width - 16) / 6);
-        int sx = (width - tw * 6) / 2;
+        int tw = Math.min(150, (width - 16) / TABS.length);
+        int sx = (width - tw * TABS.length) / 2;
         int ty = 34;
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < TABS.length; i++) {
             int x = sx + i * tw;
             boolean sel = i == tab;
             boolean hov = in(mx, my, x, ty, tw - 3, 22);
@@ -208,7 +218,7 @@ public class MenuScreen extends Screen {
             ctx.getMatrices().push();
             ctx.getMatrices().translate(x + 22, ty + 11 - 4.5f * k, 0.0);
             ctx.getMatrices().scale(k, k, 1f);
-            if (i == 5) {
+            if (i == TABS.length - 1) {
                 // #INFO - gruba biala czcionka, wyrozniona
                 ctx.drawTextWithShadow(textRenderer, Text.literal(name).formatted(Formatting.BOLD), 0, 0, 0xFFFFFFFF);
             } else {
@@ -216,7 +226,7 @@ public class MenuScreen extends Screen {
                 ctx.drawTextWithShadow(textRenderer, name, 0, 0, col);
             }
             ctx.getMatrices().pop();
-            if (i == 5) {
+            if (i == TABS.length - 1) {
                 int pulse = (int) (120 + 100 * Math.sin(t / 300.0));
                 ctx.fill(x, ty + 19, x + tw - 3, ty + 20, Theme.alpha(0xFFFFFF, pulse));
             }
@@ -238,7 +248,7 @@ public class MenuScreen extends Screen {
         int total = hh + body + (m.open && body > 0 ? 6 : 0);
         int accent = Theme.accent(y * 0.0015f);
 
-        ctx.fill(x, y, x + w, y + total, m.enabled ? 0xC0191935 : 0xB0121224);
+        ctx.fill(x, y, x + w, y + total, m.enabled ? cardCol(0x191935) : cardCol(0x121224));
         ctx.fill(x, y, x + 3, y + total, m.enabled ? accent : 0xFF3A3A55);
         ctx.drawBorder(x, y, w, total, 0x40FFFFFF);
         boolean hov = in(mx, my, x, y, w, hh) && my >= cTop && my <= cBottom;
@@ -353,8 +363,11 @@ public class MenuScreen extends Screen {
                 });
             }
             case Setting.TEXT -> {
-                int fw = Math.min(iw, 300);
+                int fw = iw >= 480 ? 220 : iw / 2;
                 int fx = lx + iw - fw;
+                if (s.label.equals("s.query")) {
+                    ctx.drawTextWithShadow(textRenderer, textRenderer.trimToWidth(Lang.t(s.label), iw - fw - 8), lx, y + 9, 0xFFDDDDEE);
+                }
                 drawInput(ctx, s, fx, y + 3, fw);
             }
             case Setting.ACTION -> {
@@ -441,7 +454,7 @@ public class MenuScreen extends Screen {
         int hh = 30, body = 84;
         int total = hh + body;
         int accent = Theme.accent(0.3f);
-        ctx.fill(x, y, x + w, y + total, 0xC0191935);
+        ctx.fill(x, y, x + w, y + total, cardCol(0x191935));
         ctx.fill(x, y, x + 3, y + total, accent);
         ctx.drawBorder(x, y, w, total, 0x40FFFFFF);
         ctx.drawItem(new ItemStack(Items.COMPASS), x + 10, y + 7);
@@ -467,12 +480,41 @@ public class MenuScreen extends Screen {
         return y + total + 8;
     }
 
+    // ===== MUZYKA =====
+    int drawMusic(DrawContext ctx, int x, int y, int w, int mx, int my) {
+        List<Music.Track> list = Music.results;
+        String st = Music.status;
+        if (!st.isEmpty()) {
+            ctx.drawCenteredTextWithShadow(textRenderer, st, x + w / 2, y + 4, 0xFFAAAAC8);
+            y += 16;
+        }
+        List<OrderedText> note = textRenderer.wrapLines(Text.literal(Lang.t("mu.note")), w);
+        for (int i = 0; i < note.size(); i++) {
+            ctx.drawTextWithShadow(textRenderer, note.get(i), x, y + 2 + i * 10, 0xFF8080A0);
+        }
+        y += note.size() * 10 + 8;
+        for (int i = 0; i < list.size(); i++) {
+            Music.Track tr = list.get(i);
+            boolean playing = Music.playing == i;
+            boolean hv = in(mx, my, x, y, w, 22) && my >= cTop && my <= cBottom;
+            ctx.fill(x, y, x + w, y + 22, playing ? cardCol(0x2A2A55) : hv ? cardCol(0x242444) : cardCol(0x181830));
+            ctx.drawBorder(x, y, w, 22, playing ? Theme.accent(i * 0.05f) : 0x30FFFFFF);
+            String line = (playing ? "> " : "") + tr.title() + " - " + tr.artist();
+            ctx.drawTextWithShadow(textRenderer, textRenderer.trimToWidth(line, w - 16), x + 8, y + 7,
+                    playing ? Theme.accent(0f) : 0xFFFFFFFF);
+            final int idx = i;
+            reg(x, y, w, 22, true, (a, b, c) -> Music.play(idx));
+            y += 24;
+        }
+        return y + 8;
+    }
+
     // ===== INFO =====
     int drawInfo(DrawContext ctx, int x, int y, int w, int mx, int my) {
         long t = System.currentTimeMillis();
         int total = 210;
         int accent = Theme.accent(0.5f);
-        ctx.fill(x, y, x + w, y + total, 0xC0191935);
+        ctx.fill(x, y, x + w, y + total, cardCol(0x191935));
         ctx.fill(x, y, x + 3, y + total, accent);
         ctx.drawBorder(x, y, w, total, 0x40FFFFFF);
 

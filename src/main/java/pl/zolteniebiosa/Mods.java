@@ -16,7 +16,9 @@ public class Mods {
 
     // ===== WYGLAD (0) =====
     public static final Mod THEME = reg(new Mod("theme", Items.NETHER_STAR, 0, false)
-            .add(Setting.color("color", "s.color", 0)));
+            .add(Setting.color("color", "s.color", 0))
+            .add(Setting.num("opacity", "s.opacity", 10, 100, 45))
+            .add(Setting.bool("bganim", "s.bganim", true)));
 
     public static final Mod VIEWMODEL = reg(new Mod("viewmodel", Items.DIAMOND_SWORD, 0, true)
             .add(Setting.num("x", "s.x", -100, 100, 0))
@@ -26,6 +28,22 @@ public class Mods {
             .add(Setting.num("rx", "s.rx", -180, 180, 0))
             .add(Setting.num("ry", "s.ry", -180, 180, 0))
             .add(Setting.num("rz", "s.rz", -180, 180, 0)));
+
+    public static final Mod CROSSHAIR = reg(new Mod("crosshair", Items.SPECTRAL_ARROW, 0, true)
+            .add(Setting.mode("style", "s.style", 0, "Plus", "Kropka", "Okrąg", "X-Strike", "Snajper"))
+            .add(Setting.num("size", "s.size2", 2, 30, 8))
+            .add(Setting.num("thick", "s.thick", 1, 4, 1))
+            .add(Setting.num("gap", "s.gap", 0, 12, 3))
+            .add(Setting.color("color", "s.color", 6))
+            .add(Setting.bool("dot", "s.dot", false)));
+
+    public static final Mod CAPE = reg(new Mod("cape", Items.ELYTRA, 0, true)
+            .add(Setting.mode("cape", "s.cape", 1, Capes.NAMES))
+            .add(Setting.info("info", "i.cape")));
+
+    public static final Mod ZOOM = reg(new Mod("zoom", Items.GLASS_PANE, 0, true)
+            .add(Setting.num("fov", "s.fov", 30, 70, 30))
+            .add(Setting.info("info", "i.zoom")));
 
     public static final Mod NIGHT = reg(new Mod("night", Items.CLOCK, 0, true));
 
@@ -48,6 +66,14 @@ public class Mods {
     public static final Mod VOICE = reg(new Mod("voice", Items.JUKEBOX, 0, true)
             .add(Setting.num("volume", "s.volume", 0, 100, 90))
             .add(Setting.mode("pitch", "s.pitch", 1, "o.normal", "o.cute", "o.high")));
+
+    public static final Mod DISCORD = reg(new Mod("discord", Items.BELL, 0, true)
+            .add(Setting.text("appid", "s.appid", "", "s.appid"))
+            .add(Setting.bool("showserver", "s.showserver", false))
+            .add(Setting.info("info", "i.discord")));
+
+    public static final Mod SYNC = reg(new Mod("sync", Items.ENDER_PEARL, 0, true)
+            .add(Setting.info("info", "i.sync")));
 
     // ===== PETY (1) =====
     public static final Mod PET = reg(new Mod("pet", Items.BONE, 1, true)
@@ -80,6 +106,11 @@ public class Mods {
             .add(Setting.text("name", "s.skinname", "", "s.skinname"))
             .add(Setting.info("info", "i.skin")));
 
+    public static final Mod NOPUSH = reg(new Mod("nopush", Items.PISTON, 2, true)
+            .add(Setting.info("info", "i.nopush")));
+
+    public static final Mod AUTOSPRINT = reg(new Mod("autosprint", Items.LEATHER_BOOTS, 2, true));
+
     // ===== ZDOBYCZ (3) =====
     private static final String[] ORES = {"coal_ore", "deepslate_coal_ore", "iron_ore", "deepslate_iron_ore",
             "copper_ore", "deepslate_copper_ore", "gold_ore", "deepslate_gold_ore", "nether_gold_ore",
@@ -103,6 +134,8 @@ public class Mods {
 
     public static final Mod BARITONE = reg(new Mod("baritone", Items.IRON_PICKAXE, 3, true)
             .add(Setting.text("block", "s.block", "diamond_ore", "s.block"))
+            .add(Setting.num("radius", "s.radius", 4, 30, 20))
+            .add(Setting.bool("safe", "s.safe", true))
             .add(Setting.info("info", "i.baritone")));
 
     // ===== BEZPIECZENSTWO (4) =====
@@ -115,11 +148,20 @@ public class Mods {
             .add(Setting.num("dist", "s.leavedist", 1, 100, 20))
             .add(Setting.info("info", "i.leave")));
 
+    // ===== MUZYKA (5) =====
+    public static final Mod MUSIC = reg(new Mod("music", Items.NOTE_BLOCK, 5, false)
+            .add(Setting.text("query", "s.query", "", "mu.hint"))
+            .add(Setting.num("volume", "s.volume", 0, 100, 60))
+            .add(Setting.action("stop", "s.mstop", () -> Music.stop()))
+            .add(Setting.action("next", "s.mnext", () -> Music.next())));
+
     static {
         HUD.enabled = true;
         VOICE.enabled = true;
+        SYNC.enabled = true;
         BARITONE.onChange = () -> Modules.baritone(BARITONE.enabled);
         SKIN.get("name").onCommit = () -> Skin.apply(SKIN.enabled ? SKIN.txt("name") : "");
         SKIN.onChange = () -> Skin.apply(SKIN.enabled ? SKIN.txt("name") : "");
+        MUSIC.get("query").onCommit = () -> Music.search(MUSIC.txt("query"));
     }
 }

@@ -5,29 +5,38 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.SkinTextures;
+import net.minecraft.client.util.SkinTextures;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Skin {
-    public static volatile SkinTextures tex = null;
-    private static String loaded = "";
+    private static final Map<String, SkinTextures> cache = new ConcurrentHashMap<>();
+    private static final Set<String> requested = ConcurrentHashMap.newKeySet();
+
+    // zwraca skin z cache albo null i uruchamia pobieranie w tle
+    public static SkinTextures get(String name) {
+        if (name == null) return null;
+        String n = name.trim();
+        if (!n.matches("[A-Za-z0-9_]{1,16}")) return null;
+        String k = n.toLowerCase();
+        SkinTextures t = cache.get(k);
+        if (t == null && requested.add(k)) fetch(n, k);
+        return t;
+    }
 
     public static void apply(String name) {
-        if (name == null || name.isBlank()) {
-            tex = null;
-            loaded = "";
-            return;
-        }
-        name = name.trim();
-        if (name.equals(loaded)) return;
-        loaded = name;
-        final String nick = name;
+        get(name);
+    }
+
+    private static void fetch(String nick, String key) {
         MinecraftClient mc = MinecraftClient.getInstance();
         CompletableFuture.runAsync(() -> {
             try {
@@ -41,9 +50,9 @@ public class Skin {
                 ProfileResult pr = mc.getSessionService().fetchProfile(uuid, false);
                 if (pr == null) return;
                 GameProfile gp = pr.profile();
-                mc.getSkinProvider().fetchSkinTextures(gp).thenAccept(opt -> opt.ifPresent(t -> tex = t));
+                mc.getSkinProvider().fetchSkinTextures(gp).thenAccept(opt -> opt.ifPresent(t -> cache.put(key, t)));
             } catch (Exception e) {
-                loaded = "";
+                // nick nie istnieje albo brak internetu
             }
         });
     }
