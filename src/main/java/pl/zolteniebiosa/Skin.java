@@ -5,7 +5,7 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.SkinTextures;
+import net.minecraft.client.util.SkinTextures;
 
 import java.net.URI;
 import java.net.http.HttpClient;
