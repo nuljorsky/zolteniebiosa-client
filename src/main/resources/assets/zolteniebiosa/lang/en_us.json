@@ -1,5 +1,6 @@
 {
-  "key.zolteniebiosa.menu": "Open ZolteNiebiosa CLIENT menu",
-  "key.zolteniebiosa.restore": "Anty kostka - przywroc EQ",
+  "key.zolteniebiosa.menu": "Open menu ZolteNiebiosa CLIENT",
+  "key.zolteniebiosa.restore": "Anti-scramble - restore inventory",
+  "key.zolteniebiosa.zoom": "Zoom (hold)",
   "key.categories.zolteniebiosa": "ZolteNiebiosa CLIENT"
 }

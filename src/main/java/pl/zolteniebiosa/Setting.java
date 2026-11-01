@@ -1,9 +1,10 @@
 package pl.zolteniebiosa;
 
 import java.util.LinkedHashSet;
+import java.util.function.Supplier;
 
 public class Setting {
-    public static final int NUM = 0, MODE = 1, COLOR = 2, TEXT = 3, ACTION = 4, BLOCKS = 5, BOOL = 6, INFO = 7;
+    public static final int NUM = 0, MODE = 1, COLOR = 2, TEXT = 3, ACTION = 4, BLOCKS = 5, BOOL = 6, INFO = 7, XHAIR = 8, DYN = 9;
     public final int kind;
     public final String key, label;
     public double num, min, max;
@@ -12,7 +13,7 @@ public class Setting {
     public String text = "", hint = "";
     public boolean flag;
     public Runnable action, onCommit;
-    public java.util.function.Supplier<String> dyn;
+    public Supplier<String> dyn;
     public final LinkedHashSet<String> blocks = new LinkedHashSet<>();
 
     private Setting(int kind, String key, String label) {
@@ -61,8 +62,16 @@ public class Setting {
         return new Setting(INFO, key, textKey);
     }
 
-    public static Setting dynInfo(String key, java.util.function.Supplier<String> sup) {
-        Setting s = new Setting(INFO, key, key);
+    /** Rzad kafelkow z podgladem celownika (0 = domyslny Minecraft, 1..5 wlasne). */
+    public static Setting xhair(String key, String label, int def, String... opts) {
+        Setting s = new Setting(XHAIR, key, label);
+        s.opts = opts; s.idx = def;
+        return s;
+    }
+
+    /** Tekst, ktory sie sam odswieza (np. status Discorda). */
+    public static Setting dyn(String key, Supplier<String> sup) {
+        Setting s = new Setting(DYN, key, key);
         s.dyn = sup;
         return s;
     }
@@ -77,7 +86,7 @@ public class Setting {
     public String save() {
         return switch (kind) {
             case NUM -> String.valueOf((int) Math.round(num));
-            case MODE, COLOR -> String.valueOf(idx);
+            case MODE, COLOR, XHAIR -> String.valueOf(idx);
             case TEXT -> text;
             case BOOL -> String.valueOf(flag);
             case BLOCKS -> String.join(",", blocks);
@@ -89,7 +98,7 @@ public class Setting {
         try {
             switch (kind) {
                 case NUM -> num = Math.max(min, Math.min(max, Integer.parseInt(v)));
-                case MODE -> idx = Math.max(0, Math.min(opts.length - 1, Integer.parseInt(v)));
+                case MODE, XHAIR -> idx = Math.max(0, Math.min(opts.length - 1, Integer.parseInt(v)));
                 case COLOR -> idx = Math.max(0, Math.min(Theme.PAL.length - 1, Integer.parseInt(v)));
                 case TEXT -> text = v;
                 case BOOL -> flag = Boolean.parseBoolean(v);

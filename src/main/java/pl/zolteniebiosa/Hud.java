@@ -1,15 +1,14 @@
 package pl.zolteniebiosa;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import net.minecraft.util.Formatting;
+import net.minecraft.text.Text;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 public class Hud {
     public static void render(DrawContext ctx, RenderTickCounter tc) {

@@ -25,6 +25,7 @@ public final class Overlays {
         if (Mods.KEYSTROKES.enabled) keystrokes(ctx, mc, W, H);
         if (Mods.ARMORHUD.enabled) armor(ctx, mc, W, H);
         if (Mods.MUSIC.b("shownow") && Music.now != null) nowPlaying(ctx, mc, W);
+        PvpHud.render(ctx, mc, W, H);
     }
 
     // ===================== keystrokes + CPS =====================

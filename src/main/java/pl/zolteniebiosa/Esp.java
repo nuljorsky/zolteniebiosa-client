@@ -3,22 +3,22 @@ package pl.zolteniebiosa;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.minecraft.block.Block;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderProgramKeys;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
-import net.minecraft.client.render.BuiltBuffer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
+import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.util.Identifier;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.registry.Registries;
+import net.minecraft.client.render.BuiltBuffer;
 import org.joml.Matrix4fStack;
 
 import java.awt.Color;
@@ -31,6 +31,7 @@ public class Esp {
     public record Hit(BlockPos pos, int rgb) { }
 
     public static volatile List<Hit> espHits = List.of();
+    public static volatile List<Hit> xrayHits = List.of();
 
     // ===== presety =====
     private static void add(Setting s, String... ids) {
@@ -90,10 +91,22 @@ public class Esp {
         boolean auto = m.mode("colormode") == 0;
         int cidx = m.get("color").idx;
         int custom = cidx <= 0 ? -1 : (Theme.PAL[Math.min(cidx, Theme.PAL.length - 1)] & 0xFFFFFF);
+        BlockPos o = mc.player.getBlockPos();
+        int minY = Math.max(mc.world.getBottomY(), o.getY() - r);
+        int maxY = Math.min(mc.world.getBottomY() + mc.world.getHeight() - 1, o.getY() + r);
         List<Hit> found = new ArrayList<>();
-        for (BlockPos bp : Scan.find(mc.world, mc.player.getBlockPos(), r, wanted, 5000)) {
-            Block b = mc.world.getBlockState(bp).getBlock();
-            found.add(new Hit(bp, auto ? autoColor(b) : custom));
+        BlockPos.Mutable mp = new BlockPos.Mutable();
+        for (int x = o.getX() - r; x <= o.getX() + r; x++) {
+            for (int z = o.getZ() - r; z <= o.getZ() + r; z++) {
+                for (int y = minY; y <= maxY; y++) {
+                    mp.set(x, y, z);
+                    Block b = mc.world.getBlockState(mp).getBlock();
+                    if (wanted.contains(b)) {
+                        found.add(new Hit(mp.toImmutable(), auto ? autoColor(b) : custom));
+                        if (found.size() >= 4000) return found;
+                    }
+                }
+            }
         }
         return found;
     }
@@ -157,17 +170,6 @@ public class Esp {
         for (double[] l : ed) ribbon(b, l[0], l[1], l[2], l[3], l[4], l[5], 1.6f, rgb, 255);
     }
 
-    private static void entityBox(BufferBuilder b, Vec3d cam, net.minecraft.util.math.Box bx, float px, int rgb) {
-        double ax = bx.minX - cam.x, ay = bx.minY - cam.y, az = bx.minZ - cam.z;
-        double cx = bx.maxX - cam.x, cy = bx.maxY - cam.y, cz = bx.maxZ - cam.z;
-        double[][] ed = {
-                {ax, ay, az, cx, ay, az}, {cx, ay, az, cx, ay, cz}, {cx, ay, cz, ax, ay, cz}, {ax, ay, cz, ax, ay, az},
-                {ax, cy, az, cx, cy, az}, {cx, cy, az, cx, cy, cz}, {cx, cy, cz, ax, cy, cz}, {ax, cy, cz, ax, cy, az},
-                {ax, ay, az, ax, cy, az}, {cx, ay, az, cx, cy, az}, {cx, ay, cz, cx, cy, cz}, {ax, ay, cz, ax, cy, cz}
-        };
-        for (double[] l : ed) ribbon(b, l[0], l[1], l[2], l[3], l[4], l[5], px, rgb, 255);
-    }
-
     private static void drawHits(BufferBuilder b, Vec3d cam, List<Hit> hits, boolean fill) {
         for (Hit h : hits) {
             int rgb = h.rgb();
@@ -177,8 +179,8 @@ public class Esp {
     }
 
     private static void render(WorldRenderContext ctx) {
-        boolean t = Mods.TRACERS.enabled, e = Mods.BLOCKESP.enabled, hb = Mods.HITBOXES.enabled;
-        if (!t && !e && !hb) return;
+        boolean t = Mods.TRACERS.enabled, e = Mods.BLOCKESP.enabled, x = Mods.XRAY.enabled;
+        if (!t && !e && !x) return;
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.world == null || mc.player == null) return;
 
@@ -199,6 +201,7 @@ public class Esp {
             verts = 0;
             BufferBuilder b = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 
+            if (x) drawHits(b, cam, xrayHits, Mods.XRAY.b("fill"));
             if (e) drawHits(b, cam, espHits, Mods.BLOCKESP.b("fill"));
 
             if (t) {
@@ -216,23 +219,6 @@ public class Esp {
                     if (en.distanceTo(mc.player) > maxD) continue;
                     Vec3d p = en.getLerpedPos(td).add(0, en.getHeight() * 0.5, 0).subtract(cam);
                     ribbon(b, sx, sy, sz, p.x, p.y, p.z, px, rgb, 255);
-                }
-            }
-
-            if (hb) {
-                int hm = Mods.HITBOXES.mode("target");
-                int hd = Mods.HITBOXES.n("dist");
-                float hpx = Mods.HITBOXES.n("width") * 0.6f;
-                int hcol = Theme.pal(Mods.HITBOXES.get("color").idx, 0f) & 0xFFFFFF;
-                for (Entity en : mc.world.getEntities()) {
-                    if (en == mc.player) continue;
-                    boolean isP = en instanceof PlayerEntity;
-                    boolean isM = en instanceof MobEntity;
-                    if (!((hm == 0 && isP) || (hm == 1 && isM) || (hm == 2 && (isP || isM)))) continue;
-                    if (en.distanceTo(mc.player) > hd) continue;
-                    Vec3d off = en.getLerpedPos(td).subtract(en.getPos());
-                    net.minecraft.util.math.Box bx = en.getBoundingBox().offset(off);
-                    entityBox(b, cam, bx, hpx, hcol);
                 }
             }
 

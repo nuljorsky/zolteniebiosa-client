@@ -157,89 +157,147 @@ public class Lang {
         a("menu.lang", "Język / Language", "Language / Język", "Sprache / Language", "Язык / Language");
         a("menu.hint", "Kółko myszy - przewijanie  |  N - zamknij", "Mouse wheel - scroll  |  N - close", "Mausrad - scrollen  |  N - schließen", "Колесо - прокрутка  |  N - закрыть");
         a("menu.author", "Autor", "Author", "Autor", "Автор");
-        // etap 3
+
+        // ===== etap 3 =====
+        a("m.skin", "Skin po nicku (widzą go znajomi z ZTN)", "Skin by name (ZTN friends see it)", "Skin per Name (ZTN-Freunde sehen ihn)", "Скин по нику (видят друзья с ZTN)");
+        a("d.skin", "Wpisz nick premium - dostajesz jego skina. Widzą go też gracze z ZTN CLIENT.", "Type a premium name to get its skin. ZTN CLIENT players see it too.", "Premium-Name eingeben, um den Skin zu bekommen. ZTN-Spieler sehen ihn auch.", "Введите ник - получите его скин. Игроки с ZTN CLIENT тоже его видят.");
         a("m.crosshair", "Celownik PvP", "PvP crosshair", "PvP-Fadenkreuz", "Прицел для PvP");
-        a("d.crosshair", "5 własnych celowników, bez resource packa.", "5 built-in crosshairs, no resource pack.", "5 eigene Fadenkreuze, ohne Resource Pack.", "5 прицелов без ресурспака.");
-        a("m.cape", "Pelerynka (widzą ją gracze z klientem)", "Cape (seen by client users)", "Umhang (für Client-Nutzer sichtbar)", "Плащ (видят игроки с клиентом)");
-        a("d.cape", "Wybierz pelerynkę. Widzą ją tylko osoby z tym klientem.", "Pick a cape. Only people using this client see it.", "Wähle einen Umhang. Nur Nutzer dieses Clients sehen ihn.", "Выберите плащ. Видят только игроки с этим клиентом.");
-        a("i.cape", "Pelerynka i skin są widoczne dla innych graczy z ZolteNiebiosa CLIENT, gdy są w pobliżu (włącz też moduł Widoczność dla znajomych).", "Cape and skin are visible to other ZolteNiebiosa CLIENT users nearby (also enable the Friends visibility module).", "Umhang und Skin sind für andere ZolteNiebiosa-CLIENT-Nutzer in der Nähe sichtbar (auch das Freunde-Modul aktivieren).", "Плащ и скин видят другие игроки с ZolteNiebiosa CLIENT рядом (включите также модуль видимости).");
-        a("m.zoom", "Zoom (klawisz C)", "Zoom (key C)", "Zoom (Taste C)", "Зум (клавиша C)");
-        a("d.zoom", "Przybliżenie na przytrzymanie klawisza C.", "Hold C to zoom in.", "C gedrückt halten zum Zoomen.", "Удерживайте C для приближения.");
-        a("i.zoom", "Przytrzymaj klawisz C w grze. Klawisz zmienisz w Sterowaniu.", "Hold C in game. Rebind it in Controls.", "C im Spiel gedrückt halten. In Steuerung änderbar.", "Удерживайте C в игре. Меняется в управлении.");
-        a("m.discord", "Discord (status gry)", "Discord (game status)", "Discord (Spielstatus)", "Discord (статус игры)");
-        a("d.discord", "Znajomi widzą na Discordzie, że grasz w ZolteNiebiosa CLIENT.", "Friends see you playing ZolteNiebiosa CLIENT on Discord.", "Freunde sehen auf Discord, dass du ZolteNiebiosa CLIENT spielst.", "Друзья видят в Discord, что вы играете в ZolteNiebiosa CLIENT.");
-        a("i.discord", "1) Wejdź na discord.com/developers/applications i kliknij New Application. 2) Nazwij ją ZolteNiebiosa CLIENT. 3) Skopiuj Application ID i wklej tutaj, potem Enter. 4) Włącz moduł. Discord musi być uruchomiony na komputerze (Windows).", "1) Open discord.com/developers/applications and click New Application. 2) Name it ZolteNiebiosa CLIENT. 3) Copy the Application ID and paste it here, then Enter. 4) Enable the module. Discord must be running (Windows).", "1) Öffne discord.com/developers/applications, New Application. 2) Nenne sie ZolteNiebiosa CLIENT. 3) Application ID kopieren, hier einfügen, Enter. 4) Modul aktivieren. Discord muss laufen (Windows).", "1) Откройте discord.com/developers/applications, New Application. 2) Назовите ZolteNiebiosa CLIENT. 3) Скопируйте Application ID, вставьте сюда, Enter. 4) Включите модуль. Discord должен быть запущен (Windows).");
-        a("m.sync", "Widoczność dla znajomych z klientem", "Friends with client", "Freunde mit Client", "Видимость для друзей с клиентом");
-        a("d.sync", "Wysyła twój skin i pelerynkę innym graczom z klientem.", "Sends your skin and cape to other client users.", "Sendet deinen Skin und Umhang an andere Client-Nutzer.", "Отправляет ваш скин и плащ другим игрокам с клиентом.");
-        a("i.sync", "Wymiana działa przez publiczny przekaźnik ntfy.sh (bez własnego serwera). Wysyłany jest tylko twój UUID, nick skina i numer pelerynki. Odświeża się co ok. 20 sekund.", "Sync uses the public ntfy.sh relay (no own server). Only your UUID, skin name and cape number are sent. Refreshes about every 20 seconds.", "Der Abgleich läuft über das öffentliche ntfy.sh (ohne eigenen Server). Gesendet werden nur UUID, Skin-Name und Umhang-Nummer. Aktualisierung alle ca. 20 Sekunden.", "Обмен идёт через публичный ntfy.sh (без своего сервера). Отправляются только UUID, ник скина и номер плаща. Обновление раз в ~20 секунд.");
-        a("m.nopush", "NoPush", "NoPush", "NoPush", "NoPush");
-        a("d.nopush", "Nie popchną cię gracze, woda ani bloki (przydatne w trapach).", "Players, water and blocks can't push you (useful in traps).", "Spieler, Wasser und Blöcke schieben dich nicht (nützlich in Traps).", "Игроки, вода и блоки вас не толкают (полезно в ловушках).");
-        a("i.nopush", "Działa po stronie klienta. Serwer nadal może cię przesunąć pakietami ruchu.", "Client-side only. A server can still move you with movement packets.", "Nur clientseitig. Ein Server kann dich weiterhin per Bewegungspaketen bewegen.", "Только на стороне клиента. Сервер всё ещё может двигать вас пакетами.");
-        a("m.autosprint", "AutoSprint", "AutoSprint", "AutoSprint", "АвтоСпринт");
-        a("d.autosprint", "Biegniesz bez trzymania klawisza sprintu.", "Sprint without holding the sprint key.", "Sprinten ohne Sprint-Taste.", "Бег без удержания клавиши спринта.");
-        a("m.music", "Odtwarzacz muzyki", "Music player", "Musikplayer", "Музыкальный плеер");
-        a("d.music", "Muzyka w launcherze, bez przeglądarki.", "Music inside the client, no browser.", "Musik im Client, ohne Browser.", "Музыка в клиенте, без браузера.");
-        a("d.baritone", "Wbudowany kopacz - nie potrzebujesz moda Baritone.", "Built-in miner - you don't need the Baritone mod.", "Eingebauter Miner - kein Baritone-Mod nötig.", "Встроенный копатель - мод Baritone не нужен.");
-        a("i.baritone", "Wpisz blok (np. diamond_ore, można kilka po przecinku), potem włącz przełącznik. Kopacz szuka bloku w zasięgu i drąży do niego tunel. Trzymaj kilof w ręce. Wyłączysz go przełącznikiem albo na czacie: #baritone off. To uproszczona wersja, nie prawdziwy pathfinding.", "Type a block (e.g. diamond_ore, several with commas), then switch it on. The miner looks for it in range and digs a tunnel to it. Hold a pickaxe. Switch it off or type #baritone off in chat. Simplified version, not real pathfinding.", "Block eingeben (z.B. diamond_ore, mehrere mit Komma), dann einschalten. Der Miner sucht ihn in Reichweite und gräbt einen Tunnel. Spitzhacke halten. Ausschalten oder #baritone off im Chat. Vereinfachte Version, kein echtes Pathfinding.", "Введите блок (напр. diamond_ore, несколько через запятую) и включите. Копатель ищет его рядом и роет туннель. Держите кирку. Выключить: переключатель или #baritone off в чате. Упрощённая версия, не настоящий pathfinding.");
-        a("s.style", "Styl", "Style", "Stil", "Стиль");
+        a("m.cape", "Pelerynka ZTN", "ZTN cape", "ZTN-Umhang", "Плащ ZTN");
+        a("m.keystrokes", "Keystrokes + CPS", "Keystrokes + CPS", "Keystrokes + CPS", "Клавиши + CPS");
+        a("m.armorhud", "Status pancerza", "Armor status", "Rüstungsstatus", "Состояние брони");
+        a("m.sprint", "Auto sprint", "Toggle sprint", "Auto-Sprint", "Авто-спринт");
+        a("m.zoom", "Zoom", "Zoom", "Zoom", "Зум");
+        a("m.music", "Muzyka do PvP", "PvP music", "PvP-Musik", "Музыка для PvP");
+        a("m.discord", "Discord (status w grze)", "Discord (in-game status)", "Discord (Spielstatus)", "Discord (статус в игре)");
+        a("m.ztnsync", "Synchronizacja ZTN (skiny i peleryny)", "ZTN sync (skins and capes)", "ZTN-Sync (Skins und Umhänge)", "Синхронизация ZTN (скины и плащи)");
+        a("d.crosshair", "5 własnych celowników - bez paczki tekstur.", "5 custom crosshairs - no texture pack needed.", "5 eigene Fadenkreuze - ohne Texturpaket.", "5 своих прицелов - без текстур-пака.");
+        a("d.cape", "Wybierz pelerynkę. Widzą ją tylko gracze z ZTN CLIENT.", "Pick a cape. Only ZTN CLIENT players see it.", "Wähle einen Umhang. Nur ZTN-Spieler sehen ihn.", "Выберите плащ. Видят только игроки с ZTN CLIENT.");
+        a("d.keystrokes", "WASD, myszka i liczba kliknięć na sekundę.", "WASD, mouse and clicks per second.", "WASD, Maus und Klicks pro Sekunde.", "WASD, мышь и клики в секунду.");
+        a("d.armorhud", "Pancerz z wytrzymałością na ekranie.", "Armor with durability on screen.", "Rüstung mit Haltbarkeit auf dem Bildschirm.", "Броня с прочностью на экране.");
+        a("d.sprint", "Sam biegniesz, gdy idziesz do przodu.", "You sprint automatically when moving forward.", "Du sprintest automatisch beim Vorwärtsgehen.", "Вы бежите автоматически при ходьбе вперёд.");
+        a("d.zoom", "Przytrzymaj klawisz C, żeby przybliżyć.", "Hold the C key to zoom in.", "Halte die Taste C zum Zoomen.", "Удерживайте C для приближения.");
+        a("d.music", "Wyszukaj piosenkę i słuchaj w grze - bez przeglądarki.", "Search a song and listen in-game - no browser.", "Song suchen und im Spiel hören - ohne Browser.", "Ищите песню и слушайте в игре - без браузера.");
+        a("d.discord", "Znajomi widzą na Discordzie, że grasz w ZolteNiebiosa CLIENT.", "Friends see on Discord that you play ZolteNiebiosa CLIENT.", "Freunde sehen auf Discord, dass du ZolteNiebiosa CLIENT spielst.", "Друзья видят в Discord, что вы играете в ZolteNiebiosa CLIENT.");
+        a("d.ztnsync", "Dzięki temu gracze z ZTN CLIENT widzą Twój skin i pelerynkę.", "Lets ZTN CLIENT players see your skin and cape.", "Damit sehen ZTN-Spieler deinen Skin und Umhang.", "Так игроки с ZTN CLIENT видят ваш скин и плащ.");
+        a("s.opacity", "Przezroczystość menu (%)", "Menu opacity (%)", "Menü-Deckkraft (%)", "Непрозрачность меню (%)");
+        a("s.bootanim", "Animacja ZTN przy starcie gry", "ZTN animation at game start", "ZTN-Animation beim Spielstart", "Анимация ZTN при запуске");
+        a("s.style", "Celownik", "Crosshair", "Fadenkreuz", "Прицел");
         a("s.size2", "Rozmiar", "Size", "Größe", "Размер");
         a("s.thick", "Grubość", "Thickness", "Dicke", "Толщина");
         a("s.gap", "Przerwa", "Gap", "Lücke", "Зазор");
-        a("s.dot", "Kropka w środku", "Center dot", "Mittelpunkt", "Точка в центре");
+        a("s.outline", "Czarny kontur", "Black outline", "Schwarze Kontur", "Чёрный контур");
         a("s.cape", "Pelerynka", "Cape", "Umhang", "Плащ");
-        a("s.appid", "Wklej Application ID z Discorda...", "Paste Discord Application ID...", "Discord Application ID einfügen...", "Вставьте Application ID из Discord...");
-        a("s.showserver", "Pokaż adres serwera znajomym", "Show server address to friends", "Serveradresse Freunden zeigen", "Показывать адрес сервера друзьям");
-        a("s.fov", "FOV zoomu", "Zoom FOV", "Zoom-FOV", "FOV зума");
-        a("s.opacity", "Przezroczystość menu", "Menu opacity", "Menü-Deckkraft", "Прозрачность меню");
-        a("s.bganim", "Animowane tło menu", "Animated menu background", "Animierter Menühintergrund", "Анимированный фон меню");
-        a("s.radius", "Zasięg szukania", "Search radius", "Suchradius", "Радиус поиска");
-        a("s.safe", "Tryb bezpieczny (lawa, przepaść)", "Safe mode (lava, cliffs)", "Sicherer Modus (Lava, Klippen)", "Безопасный режим (лава, обрывы)");
-        a("s.query", "Wyszukaj swojej piosenki do pvp byqu POZDRO!", "Search your PvP song, bro!", "Suche deinen PvP-Song!", "Найди свою песню для PvP!");
+        a("s.cps", "Pokaż CPS", "Show CPS", "CPS anzeigen", "Показать CPS");
+        a("s.zoomf", "Siła zoomu", "Zoom strength", "Zoom-Stärke", "Сила зума");
+        a("s.autoplay", "Następny utwór automatycznie", "Autoplay next track", "Nächsten Titel automatisch", "Следующий трек автоматически");
+        a("s.shownow", "Pokaż co gra na ekranie", "Show now playing on screen", "Aktuellen Titel anzeigen", "Показывать трек на экране");
+        a("s.appid", "Application ID z discord.com/developers", "Application ID from discord.com/developers", "Application ID von discord.com/developers", "Application ID с discord.com/developers");
+        a("s.showserver", "Pokaż znajomym na jakim serwerze grasz", "Show friends which server you play on", "Freunden den Server zeigen", "Показывать друзьям сервер");
+        a("s.reconnect", "Połącz z Discordem ponownie", "Reconnect to Discord", "Mit Discord neu verbinden", "Переподключиться к Discord");
+        a("s.createapp", "Otwórz discord.com/developers (załóż Application ID)", "Open discord.com/developers (create Application ID)", "discord.com/developers öffnen (Application ID erstellen)", "Открыть discord.com/developers (создать Application ID)");
+        a("s.syncurl", "Adres serwera ZTN Sync (https://...)", "ZTN Sync server URL (https://...)", "ZTN-Sync-Server-URL (https://...)", "Адрес сервера ZTN Sync (https://...)");
+        a("o.cr0", "Minecraft", "Minecraft", "Minecraft", "Minecraft");
+        a("o.cr1", "Kropka", "Dot", "Punkt", "Точка");
+        a("o.cr2", "Krzyż PvP", "PvP cross", "PvP-Kreuz", "Крест PvP");
+        a("o.cr3", "Okrąg", "Ring", "Ring", "Круг");
+        a("o.cr4", "Narożniki", "Corners", "Ecken", "Углы");
+        a("o.cr5", "Krzyż X", "X cross", "X-Kreuz", "Крест X");
+        a("i.skin", "Wpisz nick gracza premium i wciśnij Enter, potem włącz moda. Ty i gracze z ZTN CLIENT widzicie ten skin. Reszta serwera widzi normalny.",
+                "Type a premium player name and press Enter, then enable the mod. You and ZTN CLIENT players see this skin. Everyone else sees the normal one.",
+                "Premium-Namen eingeben, Enter drücken, Mod aktivieren. Du und ZTN-Spieler seht den Skin. Alle anderen sehen den normalen.",
+                "Введите ник, нажмите Enter и включите мод. Этот скин видите вы и игроки с ZTN CLIENT. Остальные видят обычный.");
+        a("i.cape", "Pelerynkę widzisz Ty i gracze z ZTN CLIENT, którzy są obok Ciebie. Wymaga ustawionego serwera ZTN Sync (zakładka DISCORD).",
+                "You and nearby ZTN CLIENT players see the cape. Needs the ZTN Sync server set (DISCORD tab).",
+                "Du und ZTN-Spieler in deiner Nähe sehen den Umhang. Braucht den ZTN-Sync-Server (Tab DISCORD).",
+                "Плащ видите вы и игроки с ZTN CLIENT рядом. Нужен сервер ZTN Sync (вкладка DISCORD).");
+        a("i.zoom", "Przytrzymaj C (zmienisz w Sterowaniu).", "Hold C (rebind in Controls).", "C halten (in Steuerung änderbar).", "Удерживайте C (меняется в управлении).");
+                a("i.discord", "1) Kliknij przycisk wyżej i załóż darmową aplikację (nazwij ją np. ZolteNiebiosa CLIENT). 2) Skopiuj jej Application ID. 3) Wklej tu i naciśnij Enter. 4) Upewnij się, że Discord jest otwarty na TYM komputerze. Status wyżej pokaże czy się połączyło.",
+                "1) Click the button above and create a free app (name it e.g. ZolteNiebiosa CLIENT). 2) Copy its Application ID. 3) Paste it here and press Enter. 4) Make sure Discord is open on THIS computer. The status above shows if it connected.",
+                "1) Klicke oben auf den Button und erstelle eine kostenlose App (z.B. ZolteNiebiosa CLIENT). 2) Kopiere die Application ID. 3) Hier einfügen und Enter drücken. 4) Discord muss auf DIESEM PC offen sein. Der Status oben zeigt den Verbindungsstatus.",
+                "1) Нажмите кнопку выше и создайте бесплатное приложение (назовите, например, ZolteNiebiosa CLIENT). 2) Скопируйте Application ID. 3) Вставьте сюда и нажмите Enter. 4) Discord должен быть открыт на ЭТОМ компьютере. Статус выше покажет подключение.");
+        a("i.sync", "Mały serwer z folderu backend/. Bez niego skiny i peleryny widzisz tylko Ty. Wpisz tu jego adres, albo wpisz go na stałe w Net.java.",
+                "A tiny server from the backend/ folder. Without it only you see your skin and cape. Enter its address here or hardcode it in Net.java.",
+                "Ein kleiner Server aus dem Ordner backend/. Ohne ihn siehst nur du Skin und Umhang. Adresse hier eintragen oder in Net.java.",
+                "Маленький сервер из папки backend/. Без него скин и плащ видите только вы. Введите адрес здесь или в Net.java.");
+        a("n.off", "Wyłączone", "Off", "Aus", "Выключено");
+        a("n.nourl", "Brak adresu serwera ZTN Sync", "No ZTN Sync server address", "Keine ZTN-Sync-Adresse", "Нет адреса ZTN Sync");
+        a("n.wait", "Łączenie...", "Connecting...", "Verbinde...", "Подключение...");
+        a("n.ok", "Połączono z serwerem ZTN Sync", "Connected to ZTN Sync", "Mit ZTN Sync verbunden", "Подключено к ZTN Sync");
+        a("n.fail", "Serwer ZTN Sync nie odpowiada - ponawiam", "ZTN Sync not responding - retrying", "ZTN Sync antwortet nicht", "ZTN Sync не отвечает");
+        a("mu.label", "Wyszukaj swojej piosenki do pvp byqu POZDRO!", "Search your PvP song, byqu CHEERS!", "Suche deinen PvP-Song, byqu GRÜSSE!", "Найди свою песню для PvP, byqu ПРИВЕТ!");
         a("mu.hint", "np. Malik Montana + Enter", "e.g. Malik Montana + Enter", "z.B. Malik Montana + Enter", "напр. Malik Montana + Enter");
-        a("mu.note", "Odtwarzane są 30-sekundowe podglądy utworów (iTunes), kolejne utwory grają po kolei. Tylko Windows.", "Plays 30-second track previews (iTunes), one after another. Windows only.", "Spielt 30-Sekunden-Vorschauen (iTunes) nacheinander. Nur Windows.", "Играют 30-секундные превью (iTunes) по очереди. Только Windows.");
-        a("s.mstop", "Zatrzymaj muzykę", "Stop music", "Musik stoppen", "Остановить музыку");
-        a("s.mnext", "Następny utwór", "Next track", "Nächster Titel", "Следующий трек");
-        a("o.none", "Brak", "None", "Keine", "Нет");
-        // etap 4
-        a("m.hitboxes", "Hitboxy", "Hitboxes", "Hitboxen", "Хитбоксы");
-        a("d.hitboxes", "Kolorowe hitboxy graczy i mobów przez ściany.", "Colored hitboxes of players and mobs through walls.", "Farbige Hitboxen von Spielern und Mobs durch Wände.", "Цветные хитбоксы игроков и мобов сквозь стены.");
-        a("m.killaura", "Kill Aura", "Kill Aura", "Kill Aura", "Kill Aura");
-        a("d.killaura", "Automatycznie bije cele w zasięgu.", "Automatically attacks targets in range.", "Greift Ziele in Reichweite automatisch an.", "Автоматически бьёт цели в радиусе.");
-        a("i.killaura", "Domyślnie bije tylko moby. Na większości serwerów za to jest ban, używaj tam, gdzie wolno.", "Attacks only mobs by default. Most servers ban this, use it only where allowed.", "Greift standardmäßig nur Mobs an. Auf den meisten Servern verboten.", "По умолчанию бьёт только мобов. На большинстве серверов за это бан.");
-        a("m.autowater", "Auto Water (MLG)", "Auto Water (MLG)", "Auto Water (MLG)", "Авто-вода (MLG)");
-        a("d.autowater", "Przy spadaniu sam wylewa wodę pod siebie.", "Places water under you when you fall.", "Platziert beim Fallen Wasser unter dir.", "При падении сам выливает воду под вас.");
-        a("i.autowater", "Potrzebujesz wiaderka z wodą na pasku szybkiego dostępu. Po lądowaniu zbiera wodę z powrotem. Przy bardzo dużych wysokościach może nie zdążyć.", "You need a water bucket in your hotbar. It picks the water back up after landing. From very high falls it may be too late.", "Du brauchst einen Wassereimer in der Hotbar. Nach der Landung sammelt er das Wasser wieder ein.", "Нужно ведро воды в панели быстрого доступа. После приземления собирает воду обратно.");
-        a("m.keystrokes", "Klawisze i CPS", "Keystrokes and CPS", "Tasten und CPS", "Клавиши и CPS");
-        a("d.keystrokes", "Pokazuje WASD, spację i kliknięcia na sekundę.", "Shows WASD, space and clicks per second.", "Zeigt WASD, Leertaste und Klicks pro Sekunde.", "Показывает WASD, пробел и клики в секунду.");
-        a("m.armorhud", "Pancerz na ekranie", "Armor HUD", "Rüstungsanzeige", "Броня на экране");
-        a("d.armorhud", "Wytrzymałość zbroi zawsze widoczna.", "Armor durability always visible.", "Haltbarkeit der Rüstung immer sichtbar.", "Прочность брони всегда видна.");
-        a("m.effects", "Efekty (mikstury)", "Potion effects", "Trank-Effekte", "Эффекты зелий");
-        a("d.effects", "Lista aktywnych efektów z czasem.", "List of active effects with timers.", "Liste aktiver Effekte mit Zeit.", "Список активных эффектов с таймером.");
-        a("m.market", "Żółty Rynek", "Yellow Market", "Gelber Markt", "Жёлтый рынок");
-        a("d.market", "Automatyczne kupowanie z rynku serwera.", "Automatic buying from the server market.", "Automatisches Kaufen auf dem Server-Markt.", "Автопокупка на рынке сервера.");
-        a("i.market", "Otwórz menu rynku na serwerze (albo włącz auto-otwieranie), ustaw filtr nazwy, maksymalną cenę (np. 10k) i opóźnienie. Moduł klika pasujące przedmioty i potwierdza zakup. Dopasuj do swojego serwera (slot odświeżania, słowa potwierdzenia).", "Open the server market menu (or enable auto-open), set a name filter, max price (e.g. 10k) and delay. The module clicks matching items and confirms the purchase. Adjust it to your server (refresh slot, confirm words).", "Öffne das Markt-Menü des Servers (oder Auto-Öffnen), stelle Namensfilter, Maximalpreis (z.B. 10k) und Verzögerung ein. Das Modul klickt passende Items und bestätigt den Kauf.", "Откройте меню рынка (или включите авто-открытие), задайте фильтр, макс. цену (напр. 10k) и задержку. Модуль кликает подходящие предметы и подтверждает покупку.");
-        a("i.pet", "Zwierzak jest ukryty w widoku z pierwszej osoby, żeby nie przeszkadzał. Zobaczysz go w widoku z tyłu (F5).", "The pet is hidden in first person so it never blocks your view. You see it in third person (F5).", "Das Haustier ist in der Ego-Perspektive versteckt. Sichtbar in der 3. Person (F5).", "Питомец скрыт от первого лица, чтобы не мешать. Виден от третьего лица (F5).");
-        a("d.xray", "Prawdziwy xray: znikają wszystkie bloki oprócz wybranych.", "Real xray: all blocks vanish except the chosen ones.", "Echtes Xray: alle Blöcke verschwinden außer den gewählten.", "Настоящий xray: все блоки исчезают, кроме выбранных.");
-        a("i.xray", "Wybierz bloki, które mają zostać widoczne (domyślnie wszystkie rudy). Włącza też jasność. Jeśli z Sodium nie działa, użyj profilu bez Sodium.", "Pick the blocks that stay visible (all ores by default). Also turns on brightness. If it does not work with Sodium, use a profile without Sodium.", "Wähle die sichtbaren Blöcke (standardmäßig alle Erze). Schaltet auch Helligkeit ein. Falls es mit Sodium nicht geht, Profil ohne Sodium nutzen.", "Выберите видимые блоки (по умолчанию все руды). Включает и яркость. Если с Sodium не работает, используйте профиль без Sodium.");
-        a("d.hitsound", "Głośny dźwięk PvP przy trafieniu.", "Loud PvP sound when you hit.", "Lauter PvP-Sound beim Treffer.", "Громкий PvP-звук при ударе.");
-        a("s.cps", "Pokaż kliknięcia na sekundę", "Show clicks per second", "Klicks pro Sekunde zeigen", "Показать клики в секунду");
-        a("s.engine", "Silnik głosu", "Voice engine", "Sprach-Engine", "Движок голоса");
-        a("o.google", "Naturalny (online)", "Natural (online)", "Natürlich (online)", "Естественный (онлайн)");
-        a("o.windows", "Systemowy Windows", "Windows system", "Windows-System", "Системный Windows");
-        a("s.connect", "Połącz z Discordem teraz", "Connect to Discord now", "Jetzt mit Discord verbinden", "Подключиться к Discord");
-        a("s.refresh", "Odśwież teraz", "Refresh now", "Jetzt aktualisieren", "Обновить сейчас");
-        a("s.range", "Zasięg (x0.1 bloku)", "Range (x0.1 block)", "Reichweite (x0.1 Block)", "Радиус (x0.1 блока)");
-        a("s.rotate", "Obracaj się do celu", "Rotate to target", "Zum Ziel drehen", "Поворачиваться к цели");
-        a("s.unlimited", "Nieograniczony dystans", "Unlimited distance", "Unbegrenzte Entfernung", "Неограниченная дистанция");
-        a("s.mfilter", "Filtr nazwy/opisu (np. diament)", "Name/lore filter (e.g. diamond)", "Namens-/Lore-Filter (z.B. diamant)", "Фильтр названия (напр. алмаз)");
-        a("s.maxprice", "Maksymalna cena (np. 10k, puste = bez limitu)", "Max price (e.g. 10k, empty = no limit)", "Max. Preis (z.B. 10k, leer = unbegrenzt)", "Макс. цена (напр. 10k, пусто = без лимита)");
-        a("s.delay", "Opóźnienie kliknięć (ms)", "Click delay (ms)", "Klick-Verzögerung (ms)", "Задержка кликов (мс)");
-        a("s.refreshslot", "Slot odświeżania (-1 = brak)", "Refresh slot (-1 = none)", "Aktualisierungs-Slot (-1 = keiner)", "Слот обновления (-1 = нет)");
-        a("s.confirm", "Słowa potwierdzenia (po przecinku)", "Confirm words (comma separated)", "Bestätigungswörter (Komma)", "Слова подтверждения (через запятую)");
-        a("s.autoopen", "Automatycznie otwieraj rynek", "Auto-open the market", "Markt automatisch öffnen", "Автоматически открывать рынок");
-        a("s.command", "Komenda rynku (np. rynek)", "Market command (e.g. rynek)", "Markt-Befehl (z.B. rynek)", "Команда рынка (напр. rynek)");
-        a("i.baritone", "Wpisz blok (np. diamond_ore, kilka po przecinku) i włącz. Kopacz szuka go w całym załadowanym świecie (nieograniczony dystans), schodzi schodkami na właściwą wysokość i drąży tunel do rudy. Trzymaj kilof. Stop: przełącznik albo #baritone off. To uproszczona wersja, nie prawdziwy Baritone.", "Type a block (e.g. diamond_ore, several with commas) and switch on. The miner searches the whole loaded world (unlimited distance), digs stairs to the right height and tunnels to the ore. Hold a pickaxe. Stop: the switch or #baritone off. Simplified, not the real Baritone.", "Block eingeben (z.B. diamond_ore, mehrere mit Komma) und einschalten. Der Miner sucht in der ganzen geladenen Welt (unbegrenzt), gräbt Treppen zur richtigen Höhe und tunnelt zum Erz. Spitzhacke halten. Stopp: Schalter oder #baritone off.", "Введите блок (напр. diamond_ore, несколько через запятую) и включите. Копатель ищет по всему загруженному миру (без лимита), роет лестницу до нужной высоты и туннель к руде. Держите кирку. Стоп: переключатель или #baritone off.");
-        a("s.unlimited", "Nieograniczony dystans (cały załadowany świat)", "Unlimited distance (whole loaded world)", "Unbegrenzte Entfernung (ganze geladene Welt)", "Неограниченная дистанция (весь загруженный мир)");
-        a("s.reopen", "Ponownie otwieraj co (s)", "Reopen every (s)", "Erneut öffnen alle (s)", "Открывать заново каждые (с)");
+        a("mu.searching", "Szukam...", "Searching...", "Suche...", "Поиск...");
+        a("mu.none", "Nic nie znaleziono", "Nothing found", "Nichts gefunden", "Ничего не найдено");
+        a("mu.err", "Błąd - sprawdź internet", "Error - check your internet", "Fehler - Internet prüfen", "Ошибка - проверьте интернет");
+        a("mu.nolocal", "Brak plików MP3 w folderze:", "No MP3 files in folder:", "Keine MP3-Dateien im Ordner:", "Нет MP3 в папке:");
+        a("mu.local", "Moje pliki MP3", "My MP3 files", "Meine MP3-Dateien", "Мои MP3-файлы");
+        a("mu.stop", "Stop", "Stop", "Stopp", "Стоп");
+        a("mu.next", "Następny", "Next", "Weiter", "Далее");
+        a("mu.now", "Teraz gra:", "Now playing:", "Spielt jetzt:", "Сейчас играет:");
+        a("mu.info", "Wyniki to 30-sekundowe fragmenty (Deezer), po nich leci następny utwór. Pełne piosenki: wrzuć własne .mp3 do config/zolteniebiosa/music i kliknij \"Moje pliki MP3\".",
+                "Results are 30-second previews (Deezer), then the next track plays. Full songs: put your own .mp3 files in config/zolteniebiosa/music and click \"My MP3 files\".",
+                "Ergebnisse sind 30-Sekunden-Vorschauen (Deezer), dann der nächste Titel. Volle Songs: eigene .mp3 in config/zolteniebiosa/music legen.",
+                "Результаты - 30-секундные отрывки (Deezer), затем следующий трек. Полные песни: свои .mp3 в config/zolteniebiosa/music.");
+        a("i.help", "N - menu | J - przywróć EQ | C - zoom | Kółko myszy - przewijanie | Klik w kartę - włącz/wyłącz | + / - rozwija ustawienia.",
+                "N - menu | J - restore inventory | C - zoom | Mouse wheel - scroll | Click a card - on/off | + / - expands settings.",
+                "N - Menü | J - Inventar | C - Zoom | Mausrad - scrollen | Klick auf Karte - an/aus | + / - Einstellungen.",
+                "N - меню | J - инвентарь | C - зум | Колесо - прокрутка | Клик по карте - вкл/выкл | + / - настройки.");
+        a("d.baritone", "Automatyczne kopanie - Baritone jest wbudowany (wersja z GitHub Actions).", "Automatic mining - Baritone is built in (GitHub Actions build).", "Automatisches Abbauen - Baritone ist eingebaut (GitHub-Actions-Build).", "Автоматическая добыча - Baritone встроен (сборка GitHub Actions).");
+        a("i.baritone", "Włącz przełącznik: kopie wpisany blok (#mine), wyłącz: #stop. Na czacie możesz też: #baritone diamond_ore on / off. Nie musisz instalować osobnego moda Baritone.",
+                "Switch on: mines the block (#mine), off: #stop. In chat you can also type: #baritone diamond_ore on / off. No separate Baritone mod needed.",
+                "Einschalten: baut den Block ab (#mine), aus: #stop. Im Chat: #baritone diamond_ore on / off. Kein extra Baritone-Mod nötig.",
+                "Включить: добывает блок (#mine), выключить: #stop. В чате: #baritone diamond_ore on / off. Отдельный мод Baritone не нужен.");
+
+        // ===== etap 5: auto rynek, ulatwienia, mody pvp =====
+        a("m.automarket", "Auto Rynek", "Auto Market", "Auto-Markt", "Авто-рынок");
+        a("d.automarket", "Wystawia trzymany przedmiot na rynku jedną komendą.", "Lists the item in your hand on the market with one command.", "Listet den gehaltenen Gegenstand mit einem Befehl auf dem Markt.", "Выставляет предмет в руке на рынок одной командой.");
+        a("s.am.open", "Komenda otwierająca rynek (np. ah)", "Command that opens the market (e.g. ah)", "Befehl zum Öffnen des Marktes (z.B. ah)", "Команда открытия рынка (напр. ah)");
+        a("s.am.list", "Komenda wystawiająca ({cena} = cena, {ilosc} = ilość)", "Listing command ({cena} = price, {ilosc} = amount)", "Befehl zum Auflisten ({cena} = Preis, {ilosc} = Menge)", "Команда выставления ({cena} = цена, {ilosc} = количество)");
+        a("s.am.fallback", "Cena bazowa (musisz ją znać - bot nie czyta cen z GUI)", "Base price (you must know it - the bot doesn't read GUI prices)", "Basispreis (musst du kennen - Bot liest keine GUI-Preise)", "Базовая цена (нужно знать самому - бот не читает GUI)");
+        a("s.am.mode", "Tryb obniżki", "Discount mode", "Rabatt-Modus", "Режим скидки");
+        a("s.am.amount", "O ile obniżyć cenę", "How much to lower the price", "Um wie viel senken", "Насколько снизить цену");
+        a("s.am.perunit", "Cena podana jest za sztukę (pomnóż przez ilość)", "Price is per item (multiply by amount)", "Preis pro Stück (mit Menge multiplizieren)", "Цена за штуку (умножить на количество)");
+        a("s.am.floor", "Minimalna cena (nigdy nie zejdzie niżej)", "Minimum price (never goes lower)", "Mindestpreis (nie niedriger)", "Минимальная цена (никогда не ниже)");
+        a("s.am.start", "Wystaw trzymany przedmiot TERAZ", "List held item NOW", "Gehaltenen Gegenstand JETZT auflisten", "Выставить предмет в руке СЕЙЧАС");
+        a("o.pct", "Procent (%)", "Percent (%)", "Prozent (%)", "Процент (%)");
+        a("o.flat", "Stała kwota", "Flat amount", "Fester Betrag", "Фиксированная сумма");
+        a("i.automarket", "To NIE skanuje cen innych graczy - każdy serwer ma inny GUI rynku, więc nie da się tego zrobić uniwersalnie. Ty wpisujesz Cenę bazową (np. ile zwykle kosztuje dany przedmiot) - bot obniży ją o ustawiony % albo kwotę i wystawi. Koniecznie dopasuj komendę listcmd do SWOJEGO serwera - sprawdź jak wygląda u Ciebie wystawianie (np. /ah sell 100, /rynek wystaw 100) i wpisz to z {cena} w miejscu liczby.",
+                "This does NOT scan other players' prices - every server has a different market GUI, so it can't be done universally. You type the Base price (what the item usually sells for) - the bot lowers it by the set % or amount and lists it. Make sure to match the listcmd command to YOUR server - check how listing works there (e.g. /ah sell 100, /market list 100) and type it with {cena} instead of the number.",
+                "Dies scannt KEINE Preise anderer Spieler - jeder Server hat eine andere Markt-GUI. Gib den Basispreis ein - der Bot senkt ihn um den eingestellten %/Betrag. Passe den listcmd-Befehl an DEINEN Server an.",
+                "Это НЕ сканирует цены других игроков - у каждого сервера свой GUI рынка. Введите базовую цену - бот снизит её на заданный % и выставит. Настройте команду listcmd под СВОЙ сервер.");
+        a("am.idle", "Gotowy - kliknij \"Wystaw TERAZ\"", "Ready - click \"List NOW\"", "Bereit - klicke \"Jetzt auflisten\"", "Готово - нажмите \"Выставить СЕЙЧАС\"");
+        a("am.wait", "Czekaj chwilę (ostatnie wystawienie było niedawno)", "Wait a moment (last listing was recent)", "Warte kurz (letztes Listing war kürzlich)", "Подождите (недавно уже выставляли)");
+        a("am.empty", "Nic nie trzymasz w ręce", "You're not holding anything", "Du hältst nichts in der Hand", "Вы ничего не держите в руке");
+        a("am.nofallback", "Wpisz Cenę bazową w ustawieniach", "Type a Base price in the settings", "Gib einen Basispreis in den Einstellungen ein", "Введите базовую цену в настройках");
+        a("am.listed", "Wystawiono:", "Listed:", "Aufgelistet:", "Выставлено:");
+
+        a("m.nopush", "NoPush - łatwiejsze perły", "NoPush - easier pearls", "NoPush - einfachere Perlen", "NoPush - лёгкие жемчужины");
+        a("d.nopush", "Nic Cię nie odpycha - łatwiej cykać perły w trapie i wychodzić z ciasnych miejsc.", "Nothing pushes you - easier to pearl-cycle in traps and escape tight spots.", "Nichts stößt dich ab - leichter in Fallen und engen Stellen.", "Вас ничто не отталкивает - легче в трапах и тесных местах.");
+        a("s.np.players", "Nie odpychają gracze/moby", "Players/mobs don't push you", "Spieler/Mobs stoßen nicht", "Игроки/мобы не толкают");
+        a("s.np.blocks", "Nie wypycha z bloków", "Blocks don't push you out", "Blöcke stoßen nicht raus", "Блоки не выталкивают");
+        a("s.np.water", "Woda/lawa nie znoszą", "Water/lava don't carry you", "Wasser/Lava tragen nicht weg", "Вода/лава не сносят");
+        a("i.nopush", "Działa cały czas gdy włączone. Najbardziej przydatne w trapach z perłami i przy chowaniu się w ciasnych szczelinach.", "Works all the time when enabled. Most useful in pearl traps and hiding in tight gaps.", "Funktioniert immer wenn aktiviert. Am nützlichsten in Perlenfallen und engen Spalten.", "Работает постоянно. Полезно в жемчужных трапах и узких щелях.");
+
+        a("m.targethud", "Target HUD", "Target HUD", "Ziel-HUD", "HUD цели");
+        a("d.targethud", "Pokazuje na ekranie gracza, w którego aktualnie celujesz, i jego HP.", "Shows the player you're aiming at and their HP on screen.", "Zeigt den anvisierten Spieler und sein HP an.", "Показывает цель прицеливания и её HP.");
+        a("m.combo", "Combo counter", "Combo counter", "Combo-Zähler", "Счётчик комбо");
+        a("d.combo", "Liczy trafienia pod rząd w jednego gracza - jak w sieciach PvP.", "Counts consecutive hits on one player - like PvP networks.", "Zählt aufeinanderfolgende Treffer - wie auf PvP-Servern.", "Считает подряд идущие удары - как на PvP-сетях.");
+        a("s.reach", "Pokaż też dystans do celu", "Also show distance to target", "Zeige auch Distanz zum Ziel", "Показывать дистанцию до цели");
+        a("m.dmgpop", "Damage popup", "Damage popup", "Schaden-Popup", "Всплывающий урон");
+        a("d.dmgpop", "Liczby obrażeń wyskakują nad trafionym graczem.", "Damage numbers pop up over the hit player.", "Schadenszahlen erscheinen über dem getroffenen Spieler.", "Числа урона всплывают над игроком.");
+        a("m.lowhp", "Alarm niskiego HP", "Low HP alert", "Niedrig-HP-Alarm", "Сигнал низкого HP");
+        a("d.lowhp", "Czerwona poświata na ekranie, gdy masz mało zdrowia - nie przeoczysz śmierci.", "Red screen glow when your HP is low - never miss it.", "Roter Bildschirm-Glow bei wenig HP - übersiehst du nie.", "Красное свечение экрана при малом HP.");
+        a("s.lowhp", "Próg HP (serduszka)", "HP threshold (hearts)", "HP-Schwelle (Herzen)", "Порог HP (сердца)");
+        a("m.compass", "Kompas PvP", "PvP compass", "PvP-Kompass", "PvP компас");
+        a("d.compass", "Strzałka na ekranie wskazuje najbliższego gracza.", "An on-screen arrow points to the nearest player.", "Ein Bildschirmpfeil zeigt zum nächsten Spieler.", "Стрелка на экране указывает на ближайшего игрока.");
+        a("s.speed", "Pokaż prędkość gracza (bloki/s)", "Show player speed (blocks/s)", "Zeige Spielergeschwindigkeit (Blöcke/s)", "Показывать скорость игрока (блоков/с)");
+
+        a("s.blur", "Rozmyte tło za menu", "Blurred background behind menu", "Unscharfer Hintergrund hinter Menü", "Размытый фон за меню");
+        a("s.parallax", "Tło reaguje na ruch myszki", "Background reacts to mouse movement", "Hintergrund reagiert auf Mausbewegung", "Фон реагирует на мышь");
+        a("s.titlescreen", "Motyw na ekranie głównym (snieg itp.)", "Theme on the main menu (snow etc.)", "Motiv im Hauptmenü (Schnee usw.)", "Тема в главном меню (снег и т.д.)");
+        a("s.frost", "Szron na krawędziach ekranu", "Frost on screen edges", "Frost an Bildschirmrändern", "Иней по краям экрана");
+        a("s.lightning", "Błyskawice podczas burzy", "Lightning flashes during storms", "Blitze bei Gewitter", "Молнии во время грозы");
+        a("o.vg", "Głos męski", "Male voice", "Männliche Stimme", "Мужской голос");
+        a("o.vw", "Głos żeński", "Female voice", "Weibliche Stimme", "Женский голос");
     }
 }

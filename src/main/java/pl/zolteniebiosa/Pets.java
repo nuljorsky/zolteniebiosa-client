@@ -1,23 +1,23 @@
 package pl.zolteniebiosa;
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.passive.PandaEntity;
+import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.passive.ParrotEntity;
 import net.minecraft.entity.passive.WolfEntity;
+import net.minecraft.util.DyeColor;
+import net.minecraft.world.World;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
-import net.minecraft.util.DyeColor;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.network.ClientPlayerEntity;
 
 public class Pets {
     private static Entity pet;
@@ -53,7 +53,6 @@ public class Pets {
         if (broken || !Mods.PET.enabled) return;
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.world == null || mc.player == null) return;
-        if (mc.options.getPerspective().isFirstPerson()) return;
         try {
             int k = Mods.PET.mode("pet");
             if (pet == null || kind != k || petWorld != mc.world) {
@@ -66,11 +65,9 @@ public class Pets {
             DyeColor dc = ci <= 0 ? DyeColor.values()[(int) ((System.currentTimeMillis() / 700) % 16)] : DYE[Math.min(ci, DYE.length - 1)];
             if (pet instanceof CatEntity c) {
                 if (!c.isTamed()) c.setTamed(true, false);
-                c.setInSittingPose(true);
                 collar(c, dc);
             } else if (pet instanceof WolfEntity w) {
                 if (!w.isTamed()) w.setTamed(true, false);
-                w.setInSittingPose(true);
                 collar(w, dc);
             } else if (pet instanceof ParrotEntity p) {
                 ParrotEntity.Variant[] vs = ParrotEntity.Variant.values();
