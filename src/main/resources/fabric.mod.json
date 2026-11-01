@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "zolteniebiosa",
-  "version": "4.0.0",
+  "version": "${version}",
   "name": "ZolteNiebiosa CLIENT",
-  "description": "ZolteNiebiosa CLIENT - menu na N, tracery, nametags, block ESP, xray, pety, viewmodel, nameprotect, skin, jezyki, glos.",
+  "description": "ZolteNiebiosa CLIENT - menu na N, celowniki PvP, skiny i peleryny, Discord, muzyka, animacja startowa, tracery, ESP, xray, pety i wiecej.",
   "authors": ["ZolteNiebiosa"],
   "contact": { "homepage": "https://www.youtube.com/@zolteNiebiosa" },
   "license": "All-Rights-Reserved",

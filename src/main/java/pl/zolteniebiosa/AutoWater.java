@@ -21,7 +21,7 @@ public class AutoWater {
         }
         ClientPlayerEntity p = mc.player;
         if (stage == 0) {
-            if (p.isOnGround() || p.isTouchingWater() || p.getAbilities().flying || p.isGliding()) return;
+            if (p.isOnGround() || p.isTouchingWater() || p.getAbilities().flying || p.isFallFlying()) return;
             if (p.fallDistance < 2.5 || p.getVelocity().y > -0.4) return;
             int slot = -1;
             for (int i = 0; i < 9; i++) {
