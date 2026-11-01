@@ -2,6 +2,7 @@ package pl.zolteniebiosa;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
 
@@ -53,7 +54,8 @@ public class Rpc {
                         connect(id);
                     }
                     activity(startTs);
-                    status = "Połączono - status widoczny na Discordzie";
+                    String base = status.startsWith("Połączono") ? status.split(" - ")[0] : "Połączono";
+                    status = base + " - status widoczny na Discordzie";
                 } else {
                     if (pipe != null) close();
                     status = !Mods.DISCORD.enabled ? "Wyłączone" : "Wklej Application ID (patrz instrukcja)";
@@ -65,7 +67,8 @@ public class Rpc {
                 return;
             } catch (Throwable e) {
                 close();
-                status = "Błąd: Discord nie jest uruchomiony albo złe Application ID (" + e.getClass().getSimpleName() + ")";
+                status = "Błąd: " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage())
+                        + " (czy Discord jest włączony na komputerze?)";
                 try {
                     synchronized (LOCK) {
                         LOCK.wait(15000);
@@ -95,8 +98,22 @@ public class Rpc {
                 hs.addProperty("v", 1);
                 hs.addProperty("client_id", id);
                 write(0, hs.toString());
-                read();
+                String resp = read();
+                JsonObject ro = JsonParser.parseString(resp).getAsJsonObject();
+                if (ro.has("evt") && "ERROR".equals(ro.get("evt").getAsString())) {
+                    String msg = "nieprawidłowe Application ID";
+                    try {
+                        msg = ro.getAsJsonObject("data").get("message").getAsString();
+                    } catch (Exception ignored) { }
+                    close();
+                    throw new Exception("Discord odrzucił połączenie: " + msg);
+                }
+                String user = "";
+                try {
+                    user = ro.getAsJsonObject("data").getAsJsonObject("user").get("username").getAsString();
+                } catch (Exception ignored) { }
                 connectedId = id;
+                if (!user.isEmpty()) status = "Połączono jako " + user;
                 return;
             } catch (Exception e) {
                 last = e;
@@ -143,6 +160,12 @@ public class Rpc {
         root.add("args", args);
         root.addProperty("nonce", UUID.randomUUID().toString());
         write(1, root.toString());
-        read();
+        String resp = read();
+        try {
+            JsonObject ro = JsonParser.parseString(resp).getAsJsonObject();
+            if (ro.has("evt") && "ERROR".equals(ro.get("evt").getAsString())) {
+                throw new Exception("Discord odrzucił status: " + ro.getAsJsonObject("data").get("message").getAsString());
+            }
+        } catch (IllegalStateException ignored) { }
     }
 }

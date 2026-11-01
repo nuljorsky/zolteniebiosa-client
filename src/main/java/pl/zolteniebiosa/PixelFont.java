@@ -1,116 +1,111 @@
 package pl.zolteniebiosa;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 import net.minecraft.client.gui.DrawContext;
 
-/**
- * Wlasna czcionka 5x7 rysowana prostokatami.
- * Dzieki temu napisy dzialaja nawet na ekranie ladowania, zanim Minecraft wczyta swoje czcionki.
- */
-public final class PixelFont {
+import java.util.HashMap;
+import java.util.Map;
+
+public class PixelFont {
     private static final Map<Character, String[]> G = new HashMap<>();
 
-    private static void g(char c, String r0, String r1, String r2, String r3, String r4, String r5, String r6) {
-        G.put(c, new String[]{r0, r1, r2, r3, r4, r5, r6});
+    private static void g(char c, String... rows) {
+        G.put(c, rows);
     }
+
+    private static final String[][] LOGO = {
+            {"#####", "....#", "...#.", "..#..", ".#...", "#....", "#####"},
+            {"#####", "..#..", "..#..", "..#..", "..#..", "..#..", "..#.."},
+            {"#...#", "##..#", "##..#", "#.#.#", "#..##", "#..##", "#...#"}
+    };
 
     static {
-        g('A', "01110", "10001", "10001", "11111", "10001", "10001", "10001");
-        g('B', "11110", "10001", "10001", "11110", "10001", "10001", "11110");
-        g('C', "01110", "10001", "10000", "10000", "10000", "10001", "01110");
-        g('D', "11110", "10001", "10001", "10001", "10001", "10001", "11110");
-        g('E', "11111", "10000", "10000", "11110", "10000", "10000", "11111");
-        g('F', "11111", "10000", "10000", "11110", "10000", "10000", "10000");
-        g('G', "01110", "10001", "10000", "10111", "10001", "10001", "01111");
-        g('H', "10001", "10001", "10001", "11111", "10001", "10001", "10001");
-        g('I', "01110", "00100", "00100", "00100", "00100", "00100", "01110");
-        g('J', "00111", "00010", "00010", "00010", "00010", "10010", "01100");
-        g('K', "10001", "10010", "10100", "11000", "10100", "10010", "10001");
-        g('L', "10000", "10000", "10000", "10000", "10000", "10000", "11111");
-        g('M', "10001", "11011", "10101", "10101", "10001", "10001", "10001");
-        g('N', "10001", "11001", "10101", "10011", "10001", "10001", "10001");
-        g('O', "01110", "10001", "10001", "10001", "10001", "10001", "01110");
-        g('P', "11110", "10001", "10001", "11110", "10000", "10000", "10000");
-        g('Q', "01110", "10001", "10001", "10001", "10101", "10010", "01101");
-        g('R', "11110", "10001", "10001", "11110", "10100", "10010", "10001");
-        g('S', "01111", "10000", "10000", "01110", "00001", "00001", "11110");
-        g('T', "11111", "00100", "00100", "00100", "00100", "00100", "00100");
-        g('U', "10001", "10001", "10001", "10001", "10001", "10001", "01110");
-        g('V', "10001", "10001", "10001", "10001", "10001", "01010", "00100");
-        g('W', "10001", "10001", "10001", "10101", "10101", "10101", "01010");
-        g('X', "10001", "10001", "01010", "00100", "01010", "10001", "10001");
-        g('Y', "10001", "10001", "01010", "00100", "00100", "00100", "00100");
-        g('Z', "11111", "00001", "00010", "00100", "01000", "10000", "11111");
-        g('0', "01110", "10001", "10011", "10101", "11001", "10001", "01110");
-        g('1', "00100", "01100", "00100", "00100", "00100", "00100", "01110");
-        g('2', "01110", "10001", "00001", "00010", "00100", "01000", "11111");
-        g('3', "11110", "00001", "00001", "01110", "00001", "00001", "11110");
-        g('4', "00010", "00110", "01010", "10010", "11111", "00010", "00010");
-        g('5', "11111", "10000", "11110", "00001", "00001", "10001", "01110");
-        g('6', "00110", "01000", "10000", "11110", "10001", "10001", "01110");
-        g('7', "11111", "00001", "00010", "00100", "01000", "01000", "01000");
-        g('8', "01110", "10001", "10001", "01110", "10001", "10001", "01110");
-        g('9', "01110", "10001", "10001", "01111", "00001", "00010", "01100");
-        g('.', "00000", "00000", "00000", "00000", "00000", "01100", "01100");
-        g(':', "00000", "01100", "01100", "00000", "01100", "01100", "00000");
-        g('_', "00000", "00000", "00000", "00000", "00000", "00000", "11111");
-        g('-', "00000", "00000", "00000", "11111", "00000", "00000", "00000");
-        g('%', "11001", "11010", "00010", "00100", "01000", "01011", "10011");
-        g('!', "00100", "00100", "00100", "00100", "00100", "00000", "00100");
-        g(' ', "00000", "00000", "00000", "00000", "00000", "00000", "00000");
+        g('a', ".#.", "#.#", "###", "#.#", "#.#");
+        g('b', "##.", "#.#", "##.", "#.#", "##.");
+        g('c', ".##", "#..", "#..", "#..", ".##");
+        g('d', "##.", "#.#", "#.#", "#.#", "##.");
+        g('e', "###", "#..", "##.", "#..", "###");
+        g('i', "###", ".#.", ".#.", ".#.", "###");
+        g('k', "#.#", "#.#", "##.", "#.#", "#.#");
+        g('l', "#..", "#..", "#..", "#..", "###");
+        g('n', "##.", "#.#", "#.#", "#.#", "#.#");
+        g('o', ".#.", "#.#", "#.#", "#.#", ".#.");
+        g('r', "##.", "#.#", "##.", "#.#", "#.#");
+        g('s', ".##", "#..", ".#.", "..#", "##.");
+        g('t', "###", ".#.", ".#.", ".#.", ".#.");
+        g('w', "#.#", "#.#", "#.#", "###", "#.#");
+        g('y', "#.#", "#.#", ".#.", ".#.", ".#.");
+        g('z', "###", "..#", ".#.", "#..", "###");
+        g('1', ".#.", "##.", ".#.", ".#.", "###");
+        g('4', "#.#", "#.#", "###", "..#", "..#");
+        g('.', "...", "...", "...", "...", ".#.");
+        g(':', "...", ".#.", "...", ".#.", "...");
+        g('_', "...", "...", "...", "...", "###");
     }
 
-    private PixelFont() { }
-
-    public static int width(String s, int px) {
-        return s.isEmpty() ? 0 : s.length() * 6 * px - px;
+    public static int c(int rgb, float a) {
+        int al = (int) (Math.max(0f, Math.min(1f, a)) * 255);
+        return (al << 24) | (rgb & 0xFFFFFF);
     }
 
-    public static int height(int px) {
-        return 7 * px;
+    public static int width(String s, int sc) {
+        return Math.max(0, s.length() * 4 * sc - sc);
     }
 
-    /** Jednolity kolor. */
-    public static void draw(DrawContext ctx, String s, int x, int y, int px, int argb) {
-        draw(ctx, s, x, y, px, argb, argb);
-    }
-
-    /** Kolor plynnie przechodzi z gory do dolu litery (np. zloty gradient). */
-    public static void draw(DrawContext ctx, String s, int x, int y, int px, int topArgb, int botArgb) {
-        s = s.toUpperCase(Locale.ROOT);
+    public static void draw(DrawContext ctx, String s, int x, int y, int sc, int color) {
         int cx = x;
-        for (int i = 0; i < s.length(); i++) {
-            glyph(ctx, s.charAt(i), cx, y, px, topArgb, botArgb);
-            cx += 6 * px;
+        for (char ch : s.toLowerCase().toCharArray()) {
+            String[] r = G.get(ch);
+            if (r != null) {
+                for (int row = 0; row < 5; row++) {
+                    for (int col = 0; col < 3; col++) {
+                        if (r[row].charAt(col) == '#') {
+                            ctx.fill(cx + col * sc, y + row * sc, cx + (col + 1) * sc, y + (row + 1) * sc, color);
+                        }
+                    }
+                }
+            }
+            cx += 4 * sc;
         }
     }
 
-    /** Pojedyncza litera - uzywane do animacji litera po literze. */
-    public static void glyph(DrawContext ctx, char ch, int x, int y, int px, int topArgb, int botArgb) {
-        String[] g = G.get(Character.toUpperCase(ch));
-        if (g == null) return;
-        for (int r = 0; r < 7; r++) {
-            int col = topArgb == botArgb ? topArgb : lerp(topArgb, botArgb, r / 6f);
-            String row = g[r];
-            int c = 0;
-            while (c < 5) {
-                if (row.charAt(c) == '1') {
-                    int start = c;
-                    while (c < 5 && row.charAt(c) == '1') c++;
-                    ctx.fill(x + start * px, y + r * px, x + c * px, y + (r + 1) * px, col);
-                } else {
-                    c++;
+    public static int logoWidth(int sc) {
+        return 17 * sc;
+    }
+
+    public static void letter(DrawContext ctx, int k, int x, int y, int sc, int color) {
+        String[] r = LOGO[k];
+        for (int row = 0; row < 7; row++) {
+            for (int col = 0; col < 5; col++) {
+                if (r[row].charAt(col) == '#') {
+                    ctx.fill(x + col * sc, y + row * sc, x + (col + 1) * sc, y + (row + 1) * sc, color);
                 }
             }
         }
     }
 
-    public static int lerp(int a, int b, float t) {
-        int aa = (a >>> 24) & 255, ar = (a >> 16) & 255, ag = (a >> 8) & 255, ab = a & 255;
-        int ba = (b >>> 24) & 255, br = (b >> 16) & 255, bg = (b >> 8) & 255, bb = b & 255;
-        return ((int) (aa + (ba - aa) * t) << 24) | ((int) (ar + (br - ar) * t) << 16)
-                | ((int) (ag + (bg - ag) * t) << 8) | (int) (ab + (bb - ab) * t);
+    public static void flower(DrawContext ctx, int x, int y, int u, int petal, float a) {
+        int p = c(petal, a), mid = c(0xFFD21F, a), st = c(0x3CB043, a * 0.9f);
+        ctx.fill(x, y + 3 * u, x + u, y + 6 * u, st);
+        ctx.fill(x - u, y - 3 * u, x + u, y - u, p);
+        ctx.fill(x - u, y + u, x + u, y + 3 * u, p);
+        ctx.fill(x - 3 * u, y - u, x - u, y + u, p);
+        ctx.fill(x + u, y - u, x + 3 * u, y + u, p);
+        ctx.fill(x - u, y - u, x + u, y + u, mid);
+    }
+
+    public static void yt(DrawContext ctx, int x, int y, int s) {
+        ctx.fill(x, y, x + 22 * s, y + 15 * s, 0xFFE62117);
+        for (int i = 0; i < 5; i++) {
+            int h = 9 - 2 * i;
+            int top = 7 - h / 2;
+            ctx.fill(x + (8 + i) * s, y + top * s, x + (9 + i) * s, y + (top + h) * s, 0xFFFFFFFF);
+        }
+    }
+
+    public static void dc(DrawContext ctx, int x, int y, int s) {
+        ctx.fill(x, y, x + 22 * s, y + 15 * s, 0xFF5865F2);
+        ctx.fill(x + 6 * s, y + 5 * s, x + 9 * s, y + 10 * s, 0xFFFFFFFF);
+        ctx.fill(x + 13 * s, y + 5 * s, x + 16 * s, y + 10 * s, 0xFFFFFFFF);
+        ctx.fill(x + 7 * s, y + 11 * s, x + 15 * s, y + 12 * s, 0xFFFFFFFF);
     }
 }

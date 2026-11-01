@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -26,6 +27,8 @@ public class Miner {
     private static Direction heading = Direction.NORTH;
     private static final Set<BlockPos> ignored = new HashSet<>();
     public static String status = "";
+    private static BlockPos pick = null;
+    private static int pickT = 0;
 
     private static void msg(String s) {
         MinecraftClient mc = MinecraftClient.getInstance();
@@ -116,14 +119,29 @@ public class Miner {
         }
     }
 
-    private static void aim(ClientPlayerEntity p, Vec3d to) {
+    // plynne obracanie (maks. kilka stopni na tick); zwraca true, gdy jestesmy prawie wycelowani
+    private static boolean aim(ClientPlayerEntity p, Vec3d to) {
         Vec3d e = p.getEyePos();
         double dx = to.x - e.x, dy = to.y - e.y, dz = to.z - e.z;
         double h = Math.sqrt(dx * dx + dz * dz);
         float yaw = (float) (Math.toDegrees(Math.atan2(dz, dx)) - 90.0);
         float pitch = (float) -Math.toDegrees(Math.atan2(dy, h));
-        p.setYaw(MathHelper.lerpAngleDegrees(0.6f, p.getYaw(), yaw));
-        p.setPitch(MathHelper.lerp(0.6f, p.getPitch(), pitch));
+        float dyaw = MathHelper.wrapDegrees(yaw - p.getYaw());
+        float dpit = pitch - p.getPitch();
+        if (Math.abs(dyaw) > 0.8f) p.setYaw(p.getYaw() + MathHelper.clamp(dyaw * 0.3f, -7f, 7f));
+        if (Math.abs(dpit) > 0.8f) p.setPitch(MathHelper.clamp(p.getPitch() + MathHelper.clamp(dpit * 0.3f, -5f, 5f), -90f, 90f));
+        return Math.abs(dyaw) < 14f && Math.abs(dpit) < 14f;
+    }
+
+    private static void selectPickaxe(ClientPlayerEntity p) {
+        if (!Mods.BARITONE.b("autotool")) return;
+        if (p.getMainHandStack().isIn(ItemTags.PICKAXES)) return;
+        for (int i = 0; i < 9; i++) {
+            if (p.getInventory().getStack(i).isIn(ItemTags.PICKAXES)) {
+                p.getInventory().selectedSlot = i;
+                return;
+            }
+        }
     }
 
     private static void mine(MinecraftClient mc, ClientPlayerEntity p, BlockPos b) {
@@ -132,10 +150,10 @@ public class Miner {
             off("Tego nie da się wykopać: " + st.getBlock().getName().getString());
             return;
         }
-        aim(p, Vec3d.ofCenter(b));
+        boolean ok = aim(p, Vec3d.ofCenter(b));
         mc.options.forwardKey.setPressed(false);
         mc.options.jumpKey.setPressed(false);
-        mc.options.attackKey.setPressed(true);
+        mc.options.attackKey.setPressed(ok);
     }
 
     public static void tick(MinecraftClient mc) {
@@ -160,11 +178,32 @@ public class Miner {
             return;
         }
         tick++;
+        selectPickaxe(p);
         BlockPos pos = p.getBlockPos();
         Set<Block> want = resolve(Mods.BARITONE.txt("block"));
-        if (target == null || mc.world.getBlockState(target).isAir() || tick % 40 == 1) findTarget(mc, pos, want);
+        if (target != null && mc.world.getBlockState(target).isAir()) {
+            pick = target;
+            pickT = 0;
+            target = null;
+        }
+        if (target == null || tick % 40 == 1) findTarget(mc, pos, want);
 
         mc.options.attackKey.setPressed(false);
+
+        // po wykopaniu rudy podejdz po wypadniete przedmioty
+        if (pick != null) {
+            Vec3d pc = Vec3d.ofCenter(pick);
+            double hd = Math.hypot(pc.x - p.getX(), pc.z - p.getZ());
+            if (hd < 1.1 || ++pickT > 40 || lava(mc, pick) || lava(mc, pick.down())) {
+                pick = null;
+            } else {
+                aim(p, new Vec3d(pc.x, p.getEyeY(), pc.z));
+                mc.options.forwardKey.setPressed(true);
+                mc.options.jumpKey.setPressed(false);
+                status = "Zbieram wypadnięte przedmioty";
+                return;
+            }
+        }
 
         // cel w zasiegu ramienia: kop go bezposrednio
         if (target != null && p.getEyePos().distanceTo(Vec3d.ofCenter(target)) <= 4.2) {
@@ -203,10 +242,14 @@ public class Miner {
                 return;
             }
             dir = heading;
-        } else if (Math.abs(dx) >= Math.abs(dz)) {
-            dir = dx > 0 ? Direction.EAST : Direction.WEST;
         } else {
-            dir = dz > 0 ? Direction.SOUTH : Direction.NORTH;
+            boolean headingX = heading == Direction.EAST || heading == Direction.WEST;
+            int adx = Math.abs(dx), adz = Math.abs(dz);
+            boolean useX = headingX ? adx + 2 >= adz : adx > adz + 2;
+            if (adx == 0) useX = false;
+            if (adz == 0) useX = true;
+            if (useX) dir = dx > 0 ? Direction.EAST : Direction.WEST;
+            else dir = dz > 0 ? Direction.SOUTH : Direction.NORTH;
         }
         heading = dir;
 
@@ -246,7 +289,8 @@ public class Miner {
             return;
         }
 
-        aim(p, Vec3d.ofCenter(newFeet).add(0, 0.3, 0));
+        Vec3d wc = Vec3d.ofCenter(newFeet);
+        aim(p, new Vec3d(wc.x, p.getEyeY() - 0.4, wc.z));
         mc.options.forwardKey.setPressed(true);
         mc.options.jumpKey.setPressed(vy > 0);
         if (p.getPos().squaredDistanceTo(lastPos) < 0.0004) still++;
